@@ -10,22 +10,24 @@ public class Player {
     @Id
     private long id;
 
-    @Column(name = "mainName", nullable = false)
+    @Column(name = "main_name", nullable = false)
     private String mainName;
 
-    @Column(name = "tempName", nullable = false)
+    @Column(name = "temp_name", nullable = false)
     private String tempName;
 
-    @Column(name = "clanName")
-    private String clanName;
 
-    @Column(name = "isClanLeader")
+    @ManyToOne
+    @JoinColumn(name = "clan", referencedColumnName = "clan_name")
+    private Clan clan;
+
+    @Column(name = "is_clan_leader")
     private boolean isClanLeader = false;
 
-    @Column(name = "isTwink")
+    @Column(name = "is_twink")
     private boolean isTwink = false;
 
-    @Column(name = "profileLink", nullable = false)
+    @Column(name = "profile_link", nullable = false)
     private String profileLink;
 
     public Player() {
@@ -55,12 +57,12 @@ public class Player {
         this.tempName = tempName;
     }
 
-    public String getClanName() {
-        return clanName;
+    public Clan getClan() {
+        return clan;
     }
 
-    public void setClanName(String clanName) {
-        this.clanName = clanName;
+    public void setClan(Clan clan) {
+        this.clan = clan;
     }
 
     public boolean isClanLeader() {

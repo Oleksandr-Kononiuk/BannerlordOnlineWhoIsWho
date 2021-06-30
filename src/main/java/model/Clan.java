@@ -1,9 +1,8 @@
 package model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import org.hibernate.annotations.NaturalId;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +10,39 @@ import java.util.List;
 @Table(name = "clans")
 public class Clan {
 
-    @Column(name = "clanName", nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private long id;
+
+    @NaturalId(mutable = false)
+    @Column(name = "clan_name", unique = true, nullable = false)
     private String clanName;
 
-    @OneToMany
+    @Column(name = "members")
+    @OneToMany(mappedBy = "clan")
     private List<Player> members = new ArrayList<>();
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getClanName() {
+        return clanName;
+    }
+
+    public void setClanName(String clanName) {
+        this.clanName = clanName;
+    }
+
+    public List<Player> getMembers() {
+        return members;
+    }
+
+    private void setMembers(List<Player> members) {
+        this.members = members;
+    }
 }

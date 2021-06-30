@@ -12,10 +12,10 @@ public class DataUtils {
 
     private static final String PROFILE_LINK = "https://bannerlord-online.com/forum/index.php?members/";
 
-    public static void main(String[] args) {
-        DataUtils du = new DataUtils();
-        du.bruteForcePlayers(5193, 5194);
-    }
+//    public static void main(String[] args) {
+//        DataUtils du = new DataUtils();
+//        du.bruteForcePlayers(5193, 5194);
+//    }
 
     public List<Player> bruteForcePlayers(int pageFrom, int pageTo) {
         List<Player> players = new ArrayList<>();

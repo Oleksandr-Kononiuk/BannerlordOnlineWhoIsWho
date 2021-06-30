@@ -7,6 +7,16 @@ import java.util.List;
 
 public class ClanDAOImpl implements ClanDAO {
     @Override
+    public void addMember(Player player) {
+
+    }
+
+    @Override
+    public boolean deleteMember(Player player) {
+        return false;
+    }
+
+    @Override
     public List<Player> getMembers(String clanName) {
         return null;
     }
