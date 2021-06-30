@@ -17,7 +17,7 @@ public class Player {
     @Column(name = "tempName", nullable = false)
     private String tempName;
 
-    @Column(name = "clanName", nullable = false)
+    @Column(name = "clanName", nullable = true)
     private String clanName;
 
     @Column(name = "isClanLeader")
@@ -25,6 +25,9 @@ public class Player {
 
     @Column(name = "isTwink")
     private boolean isTwink = false;
+
+    @Column(name = "profileLink", nullable = false)
+    private String profileLink;
 
     public Player() {
     }
@@ -75,6 +78,14 @@ public class Player {
 
     public void setTwink(boolean twink) {
         isTwink = twink;
+    }
+
+    public String getProfileLink() {
+        return profileLink;
+    }
+
+    public void setProfileLink(String profileLink) {
+        this.profileLink = profileLink;
     }
 
     @Override
