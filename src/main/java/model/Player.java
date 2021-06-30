@@ -8,7 +8,6 @@ import java.util.Objects;
 public class Player {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 
     @Column(name = "mainName", nullable = false)
@@ -17,7 +16,7 @@ public class Player {
     @Column(name = "tempName", nullable = false)
     private String tempName;
 
-    @Column(name = "clanName", nullable = true)
+    @Column(name = "clanName")
     private String clanName;
 
     @Column(name = "isClanLeader")
