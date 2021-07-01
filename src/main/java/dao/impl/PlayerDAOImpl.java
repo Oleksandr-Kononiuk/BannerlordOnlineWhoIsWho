@@ -136,7 +136,7 @@ public class PlayerDAOImpl implements PlayerDAO {
         System.out.println("New twink status:" + updatedPlayer.isTwink());
     }
 
-    private Player update(Player player) {
+    public Player update(Player player) {
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.merge(player)
         );

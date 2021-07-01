@@ -8,7 +8,7 @@ import java.util.List;
 public interface ClanDAO {
 
     void addNewClan(String clanName);
-    boolean deleteClan(String clanName);
+    void deleteClan(String clanName);
     void addMember(String clanName, String playerIdOrName);
     boolean deleteMember(String clanName, String playerIdOrName);
     List<Player> getMembers(String clanName);

@@ -20,8 +20,16 @@ public class ClanDAOImpl implements ClanDAO {
     }
 
     @Override
-    public boolean deleteClan(String clanName) {
-        return false;//todo
+    public void deleteClan(String clanName) {
+        Clan toDeleteClan = getClanByName(clanName);
+        toDeleteClan.getMembers().stream()
+                .forEach(member -> {
+                    member.setClan(null);
+                    playerDAO.update(member);
+                });
+        JpaUtil.performWithinPersistenceContext(
+                em -> em.remove(toDeleteClan)
+        );
     }
 
     @Override
@@ -61,7 +69,24 @@ public class ClanDAOImpl implements ClanDAO {
 
     @Override
     public boolean changeClanLeader(String clanName, String oldLeaderIdOrName, String newLeaderIdOrName) {
-        return false;//todo
+        List<Player> members = getMembers(clanName);
+        Player oldLeader = members.stream()
+                .filter(Player::isClanLeader)
+                .findFirst()
+                .get();
+
+        Player newLeader = members.stream()
+                .filter(player -> player.getMainName().equals(newLeaderIdOrName) || player.getId() == Long.parseLong(newLeaderIdOrName))
+                .findFirst()
+                .get();
+
+        oldLeader.setClanLeader(false);
+        newLeader.setClanLeader(true);
+
+        Player old = playerDAO.update(oldLeader);
+        Player neww = playerDAO.update(newLeader);
+
+        return !old.isClanLeader() && neww.isClanLeader();
     }
 
     @Override
