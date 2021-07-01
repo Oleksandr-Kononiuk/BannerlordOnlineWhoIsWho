@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "clans")
-public class Clan implements Serializable {
+public class Clan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -22,8 +22,19 @@ public class Clan implements Serializable {
     private String clanName;
 
     @Column(name = "members")
-    @OneToMany(mappedBy = "clan", orphanRemoval = false, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "clan", orphanRemoval = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Player> members = new ArrayList<>();
+
+    public Clan() {
+    }
+
+    public void deleteMember(Player member) {
+        this.getMembers().remove(member);
+    }
+
+    public void addMember(Player player) {
+        this.getMembers().add(player);
+    }
 
     public long getClan_id() {
         return clan_id;

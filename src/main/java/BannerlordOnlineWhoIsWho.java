@@ -1,7 +1,4 @@
-import model.Clan;
-import model.Player;
-
-import java.util.List;
+import utils.JpaUtil;
 
 public class BannerlordOnlineWhoIsWho {
 
@@ -20,12 +17,12 @@ public class BannerlordOnlineWhoIsWho {
 //        testClan.setClanName("clan2");
 //        testPlayer.setClan(testClan);
 //
-//        JpaUtil.performWithinPersistenceContext(entityManager -> {
+//        utils.JpaUtil.performWithinPersistenceContext(entityManager -> {
 //            entityManager.persist(testPlayer);
 //            entityManager.persist(testClan);
 //        });
 //
-//        Clan clan = JpaUtil.performReturningWithinPersistenceContext(entityManager -> entityManager.find(Clan.class, 4));
+//        Clan clan = utils.JpaUtil.performReturningWithinPersistenceContext(entityManager -> entityManager.find(Clan.class, 4));
 //        System.out.println(clan.getClanName());
     }
 }

@@ -1,3 +1,5 @@
+package utils;
+
 import model.Player;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -13,7 +15,7 @@ public class DataUtils {
     private static final String PROFILE_LINK = "https://bannerlord-online.com/forum/index.php?members/";
 
 //    public static void main(String[] args) {
-//        DataUtils du = new DataUtils();
+//        utils.DataUtils du = new utils.DataUtils();
 //        du.bruteForcePlayers(5193, 5194);
 //    }
 
@@ -41,7 +43,6 @@ public class DataUtils {
         } else {
             System.out.println("link is null");
         }
-
         return player;
     }
 

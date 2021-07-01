@@ -16,7 +16,7 @@ public class Player {
     @Column(name = "temp_name", nullable = false)
     private String tempName;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "clan", referencedColumnName = "clan_name")
     private Clan clan;
 
@@ -30,6 +30,16 @@ public class Player {
     private String profileLink;
 
     public Player() {
+    }
+
+    public void deleteFromClan() {
+        this.getClan().deleteMember(this);
+        this.setClan(null);
+    }
+
+    public void addToClan(Clan clan) {
+        this.setClan(clan);
+        this.getClan().addMember(this);
     }
 
     public long getId() {
