@@ -16,8 +16,7 @@ public class Player {
     @Column(name = "temp_name", nullable = false)
     private String tempName;
 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "clan", referencedColumnName = "clan_name")
     private Clan clan;
 
