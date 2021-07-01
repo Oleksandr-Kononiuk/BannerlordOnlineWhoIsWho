@@ -157,16 +157,16 @@ public class PlayerDAOImpl implements PlayerDAO {
 
 
     private boolean isId(String playerIdOrName) {
-        if (playerIdOrName.matches("\\D")) { //contain any Non-digit character
+        if (playerIdOrName.matches("\\D")) { //contain any non-digit character
             return false;
         }
         return playerIdOrName.matches("\\d{1,}"); //is contain digit character with 1+ length
     }
 
-    private Player getPlayer(String playerIdOrName) {
+    public Player getPlayer(String playerIdOrName) {
         Player player = null;
         if (isId(playerIdOrName)) {
-            player = findById(Long.parseLong(playerIdOrName));
+            player = findById(Long.parseLong(playerIdOrName));//todo getReference()??????
         } else {
             player = findByMainName(playerIdOrName);
         }

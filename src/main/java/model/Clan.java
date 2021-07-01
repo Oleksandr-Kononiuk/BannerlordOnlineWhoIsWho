@@ -28,12 +28,18 @@ public class Clan {
     public Clan() {
     }
 
+    public Clan(String name) {
+        this.clanName = name;
+    }
+
     public void deleteMember(Player member) {
         this.getMembers().remove(member);
+        member.setClan(null);
     }
 
     public void addMember(Player player) {
         this.getMembers().add(player);
+        player.setClan(this);
     }
 
     public long getClan_id() {

@@ -1,15 +1,19 @@
 package dao;
 
+import model.Clan;
 import model.Player;
 
 import java.util.List;
 
 public interface ClanDAO {
 
-    void addMember(Player player);
-    boolean deleteMember(Player player);
+    void addNewClan(String clanName);
+    boolean deleteClan(String clanName);
+    void addMember(String clanName, String playerIdOrName);
+    boolean deleteMember(String clanName, String playerIdOrName);
     List<Player> getMembers(String clanName);
     String getClanLeader(String clanName);
+    boolean changeClanLeader(String clanName, String oldLeaderIdOrName, String newLeaderIdOrName);
     List<String> getAllClans();
 
 
