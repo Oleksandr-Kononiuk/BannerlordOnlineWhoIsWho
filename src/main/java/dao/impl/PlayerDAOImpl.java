@@ -77,7 +77,7 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public List<Player> findAll() {
+    public List<Player> findAll() { //todo implement pagination or add filters by first letter or first 100
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select p from Player p", Player.class)
                         .getResultList()
@@ -168,7 +168,7 @@ public class PlayerDAOImpl implements PlayerDAO {
         if (isId(playerIdOrName)) {
             player = findById(Long.parseLong(playerIdOrName));//todo getReference()??????
         } else {
-            player = findByMainName(playerIdOrName);
+            player = findByMainName(playerIdOrName);//todo tempName ?
         }
         return player;
     }

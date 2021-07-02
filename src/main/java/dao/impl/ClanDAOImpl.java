@@ -21,7 +21,7 @@ public class ClanDAOImpl implements ClanDAO {
 
     @Override
     public void deleteClan(String clanName) {
-        Clan toDeleteClan = getClanByName(clanName);
+        Clan toDeleteClan = findByName(clanName);
         toDeleteClan.getMembers().stream()
                 .forEach(member -> {
                     member.setClan(null);
@@ -34,9 +34,10 @@ public class ClanDAOImpl implements ClanDAO {
 
     @Override
     public void addMember(String clanName, String playerIdOrName) {
-        Clan clan = getClanByName(clanName);
+        Clan clan = findByName(clanName);
         Player player = playerDAO.getPlayer(playerIdOrName);
-        clan.addMember(player);
+        player.addToClan(clan);
+        //clan.addMember(player);
         JpaUtil.performWithinPersistenceContext(
                 em -> em.merge(clan)
         );
@@ -44,18 +45,19 @@ public class ClanDAOImpl implements ClanDAO {
 
     @Override
     public boolean deleteMember(String clanName, String playerIdOrName) {
-        Clan clan = getClanByName(clanName);
+        Clan clan = findByName(clanName);
         Player player = playerDAO.getPlayer(playerIdOrName);
-        clan.deleteMember(player);
+        player.deleteFromClan();
+        //clan.deleteMember(player);
         Clan isDeleted = JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.merge(clan)
         );
-        return clan.getMembers().size() != isDeleted.getMembers().size(); //todo improve
+        return clan.getMembers().size() != isDeleted.getMembers().size(); //todo improve перевірку на видалення
     }
 
     @Override
     public List<Player> getMembers(String clanName) {
-        return getClanByName(clanName).getMembers();
+        return findByName(clanName).getMembers();
     }
 
     @Override
@@ -99,7 +101,8 @@ public class ClanDAOImpl implements ClanDAO {
         );
     }
 
-    private Clan getClanByName(String clanName) {
+    @Override
+    public Clan findByName(String clanName) {
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select c from Clan c where c.clan_name = :clanName", Clan.class)
                 .setParameter("clanName", clanName)

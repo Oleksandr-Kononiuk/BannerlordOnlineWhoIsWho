@@ -33,13 +33,13 @@ public class Player {
     }
 
     public void deleteFromClan() {
-        this.getClan().deleteMember(this);
+        this.getClan().getMembers().remove(this);
         this.setClan(null);
     }
 
     public void addToClan(Clan clan) {
         this.setClan(clan);
-        this.getClan().addMember(this);
+        this.getClan().getMembers().add(this);
     }
 
     public long getId() {
@@ -110,5 +110,18 @@ public class Player {
     public int hashCode() {
         return Objects.hash(id);
         //return 10;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", mainName='" + mainName + '\'' +
+                ", tempName='" + tempName + '\'' +
+                ", clan=" + clan +
+                ", isClanLeader=" + isClanLeader +
+                ", isTwink=" + isTwink +
+                ", profileLink='" + profileLink + '\'' +
+                '}';
     }
 }

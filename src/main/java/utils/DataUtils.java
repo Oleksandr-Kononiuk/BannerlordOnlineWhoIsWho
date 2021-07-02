@@ -14,11 +14,6 @@ public class DataUtils {
 
     private static final String PROFILE_LINK = "https://bannerlord-online.com/forum/index.php?members/";
 
-//    public static void main(String[] args) {
-//        utils.DataUtils du = new utils.DataUtils();
-//        du.bruteForcePlayers(5193, 5194);
-//    }
-
     public List<Player> bruteForcePlayers(int pageFrom, int pageTo) {
         List<Player> players = new ArrayList<>();
 
@@ -28,7 +23,6 @@ public class DataUtils {
                 players.add(newPlayer);
             }
         }
-
         return players;
     }
 
@@ -39,7 +33,8 @@ public class DataUtils {
         String link = getLink(doc);
 
         if (link != null) {
-            player = buildPlayer(getIDFromLink(link), getNickFromLink(link), link);
+            player = buildPlayer(getIDFromLink(link), getName(doc), link);
+            System.out.println(player.toString());
         } else {
             System.out.println("link is null");
         }
@@ -63,10 +58,22 @@ public class DataUtils {
         return Long.parseLong(id);
     }
 
-    private String getNickFromLink(String link) {
-        String name = link.substring(link.lastIndexOf("s/") + 2, link.lastIndexOf("."));
-        //System.out.println(name);
-        return "";
+    private String getName(Document doc) {
+        if (doc != null) {
+            Elements elements = doc.getElementsByTag("title");
+
+            if (elements.size() != 0) {
+                //System.out.println(elements.size());
+                String tagText = elements.get(0).text();
+                String name = tagText.split(" ")[0];
+//                System.out.println(tagText);
+//                System.out.println(name);
+                return name;
+            }
+        } else {
+            System.out.println("doc is null");
+        }
+        return null;
     }
 
 

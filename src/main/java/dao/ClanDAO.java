@@ -15,6 +15,5 @@ public interface ClanDAO {
     String getClanLeader(String clanName);
     boolean changeClanLeader(String clanName, String oldLeaderIdOrName, String newLeaderIdOrName);
     List<String> getAllClans();
-
-
+    Clan findByName(String clanName);
 }

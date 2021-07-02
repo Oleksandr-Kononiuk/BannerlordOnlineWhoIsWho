@@ -3,8 +3,6 @@ package model;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,15 +30,15 @@ public class Clan {
         this.clanName = name;
     }
 
-    public void deleteMember(Player member) {
-        this.getMembers().remove(member);
-        member.setClan(null);
-    }
-
-    public void addMember(Player player) {
-        this.getMembers().add(player);
-        player.setClan(this);
-    }
+//    public void deleteMember(Player member) {//todo спробувати видалити
+//        this.getMembers().remove(member);
+//        member.setClan(null);
+//    }
+//
+//    public void addMember(Player player) {//todo спробувати видалити
+//        this.getMembers().add(player);
+//        player.setClan(this);
+//    }
 
     public long getClan_id() {
         return clan_id;
