@@ -33,18 +33,17 @@ public class BannerlordOnlineWhoIsWho {
 
     private void playerCommands(String command, String[] args) {
         switch (command.toLowerCase()) {
-            case "save"             : playerDAO.save(Long.parseLong(args[0]));                          break;
-            case "find"             : playerDAO.findById(Long.parseLong(args[0])); break;//todo визначити який параметр прийшов(ід, нікнайм)
-            case "clan"             : playerDAO.getPlayerClan(args[0]);                                 break;
-            case "leader"           : playerDAO.isClanLeader(args[0]);                                  break;
-            case "twink"            : playerDAO.isTwink(args[0]);                                       break;
+            case "save"             : playerDAO.save(Long.parseLong(args[0]));                          break;//+
+            case "find"             : playerDAO.find(args[0]);                                          break;
+            case "clan"             : playerDAO.getPlayerClan(args[0]);                                 break;//+-
+            case "leader"           : playerDAO.isClanLeader(args[0]);                                  break;//+
+            case "twink"            : playerDAO.isTwink(args[0]);                                       break;//+
             case "all"              : playerDAO.findAll(); break; //todo фільтр по першій букві чи обмежити числом
-            case "change_name"      : playerDAO.changeTempName(args[0], args[1]);                       break;
-            case "change_main_name" : playerDAO.changeMainName(args[0], args[1]);                       break;
+            case "change_name"      : playerDAO.changeTempName(args[0], args[1]);                       break;//+
             //case "change_clan" : playerDAO.changeClan(args[0], args[1]); break;//todo
-            case "set_leader"       : playerDAO.setClanLeader(args[0], Boolean.parseBoolean(args[1]));  break;
-            case "set_twink"        : playerDAO.setTwink(args[0], Boolean.parseBoolean(args[1]));       break;
-            case "delete"           : playerDAO.delete(args[0]);                                        break;
+            case "set_leader"       : playerDAO.setClanLeader(args[0], Boolean.parseBoolean(args[1]));  break;//+-
+            case "set_twink"        : playerDAO.setTwink(args[0], Boolean.parseBoolean(args[1]));       break;//+-
+            case "delete"           : playerDAO.delete(args[0]);                                        break;//+
 
             default: System.out.println("Maybe wrong command format. Please try again.");
         }
@@ -62,8 +61,7 @@ public class BannerlordOnlineWhoIsWho {
             case "all"              : clanDAO.getAllClans(); break;//todo фільтр по першій букві чи обмежити числом
             case "find"             : clanDAO.findByName(args[0]);                          break;
 
-
-            default: System.out.println("Wrong command format. Please try again or write '!exit' for close app.");
+            default: System.out.println("Maybe wrong command format. Please try again.");
         }
     }
 

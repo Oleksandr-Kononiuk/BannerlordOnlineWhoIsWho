@@ -10,24 +10,28 @@ public class Player {
     @Id
     private long id;
 
+    //first name registered in DB
     @Column(name = "main_name", nullable = false)
-    private String mainName;
+    private String main_name;
 
+    //Nickname can be changer 1 per week, so it`s actual name
     @Column(name = "temp_name", nullable = false)
-    private String tempName;
+    private String temp_name;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "clan", referencedColumnName = "clan_name")
     private Clan clan;
 
     @Column(name = "is_clan_leader")
-    private boolean isClanLeader = false;
+    private boolean is_clan_leader = false;
 
     @Column(name = "is_twink")
-    private boolean isTwink = false;
+    private boolean is_twink = false;
 
     @Column(name = "profile_link", nullable = false)
-    private String profileLink;
+    private String profile_link;
+
+//todo добавити поле з датою останььго онлайну
 
     public Player() {
     }
@@ -51,19 +55,19 @@ public class Player {
     }
 
     public String getMainName() {
-        return mainName;
+        return main_name;
     }
 
     public void setMainName(String mainName) {
-        this.mainName = mainName;
+        this.main_name = mainName;
     }
 
     public String getTempName() {
-        return tempName;
+        return temp_name;
     }
 
     public void setTempName(String tempName) {
-        this.tempName = tempName;
+        this.temp_name = tempName;
     }
 
     public Clan getClan() {
@@ -75,27 +79,27 @@ public class Player {
     }
 
     public boolean isClanLeader() {
-        return isClanLeader;
+        return is_clan_leader;
     }
 
     public void setClanLeader(boolean clanLeader) {
-        isClanLeader = clanLeader;
+        is_clan_leader = clanLeader;
     }
 
     public boolean isTwink() {
-        return isTwink;
+        return is_twink;
     }
 
     public void setTwink(boolean twink) {
-        isTwink = twink;
+        is_twink = twink;
     }
 
     public String getProfileLink() {
-        return profileLink;
+        return profile_link;
     }
 
     public void setProfileLink(String profileLink) {
-        this.profileLink = profileLink;
+        this.profile_link = profileLink;
     }
 
     @Override
@@ -116,12 +120,12 @@ public class Player {
     public String toString() {
         return "Player{" +
                 "id=" + id +
-                ", mainName='" + mainName + '\'' +
-                ", tempName='" + tempName + '\'' +
+                ", mainName='" + main_name + '\'' +
+                ", tempName='" + temp_name + '\'' +
                 ", clan=" + clan +
-                ", isClanLeader=" + isClanLeader +
-                ", isTwink=" + isTwink +
-                ", profileLink='" + profileLink + '\'' +
+                ", isClanLeader=" + is_clan_leader +
+                ", isTwink=" + is_twink +
+                ", profileLink='" + profile_link + '\'' +
                 '}';
     }
 }

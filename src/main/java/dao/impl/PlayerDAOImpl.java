@@ -26,36 +26,20 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public Player findById(long id) {
-        return JpaUtil.performReturningWithinPersistenceContext(
-                em -> em.createQuery("select p from Player p where p.id = :id", Player.class)
-                .setParameter("id", id)
-                .getSingleResult()
-        );
-    }
-
-    @Override
-    public Player findByTempName(String tempName) {
-        return JpaUtil.performReturningWithinPersistenceContext(
-                em -> em.createQuery("select p from Player p where p.temp_name = :tempName", Player.class)
-                        .setParameter("tempName", tempName)
-                        .getSingleResult()
-        );
-    }
-
-    @Override
-    public Player findByMainName(String mainName) {
-        return JpaUtil.performReturningWithinPersistenceContext(
-                entityManager -> entityManager.createQuery("select p from Player p where p.main_name = :mainName", Player.class)
-                        .setParameter("mainName", mainName)
-                        .getSingleResult()
-        );
+    public Player find(String playerIdOrName) {
+        return getPlayer(playerIdOrName);
     }
 
     @Override
     public String getPlayerClan(String playerIdOrName) {
         Player player = getPlayer(playerIdOrName);
-        return player.getClan().getClanName();
+
+        if (player.getClan() == null) {
+            System.out.println("Player is`n in any clan.");
+            return "Player is`n in any clan.";
+        } else {
+            return player.getClan().getClanName();
+        }
     }
 
     @Override
@@ -63,7 +47,7 @@ public class PlayerDAOImpl implements PlayerDAO {
         if (isId(playerIdOrName)) {
             return findById(Long.parseLong(playerIdOrName)).isClanLeader();
         } else {
-            return findByMainName(playerIdOrName).isClanLeader();
+            return findByTempName(playerIdOrName).isClanLeader();
         }
     }
 
@@ -72,7 +56,7 @@ public class PlayerDAOImpl implements PlayerDAO {
         if (isId(playerIdOrName)) {
             return findById(Long.parseLong(playerIdOrName)).isTwink();
         } else {
-            return findByMainName(playerIdOrName).isTwink();
+            return findByTempName(playerIdOrName).isTwink();
         }
     }
 
@@ -85,22 +69,13 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public void changeMainName(String playerOldMainNameOrId, String newName) {
-        Player player = getPlayer(playerOldMainNameOrId);
-        player.setMainName(newName);
-        Player updatedPlayer = update(player);
-
-        System.out.println("Old name:" + player.getMainName());
-        System.out.println("New name:" + updatedPlayer.getMainName());
-    }
-
-    @Override
     public void changeTempName(String playerOldTempNameOrId, String newName) {
-        Player player = getPlayer(playerOldTempNameOrId);
+        Player player = getPlayer(playerOldTempNameOrId);//todo робить якийсь дивний зайвий селект
+        String oldName = player.getTempName();
         player.setTempName(newName);
         Player updatedPlayer = update(player);
 
-        System.out.println("Old name:" + player.getTempName());
+        System.out.println("Old name:" + oldName);
         System.out.println("New name:" + updatedPlayer.getTempName());
     }
 
@@ -119,20 +94,22 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public void setClanLeader(String playerIdOrName, boolean status) {
         Player player = getPlayer(playerIdOrName);
+        boolean oldStatus = player.isClanLeader();
         player.setClanLeader(status);
         Player updatedPlayer = update(player);
 
-        System.out.println("Old leader status:" + player.isClanLeader());
+        System.out.println("Old leader status:" + oldStatus);
         System.out.println("New leader status:" + updatedPlayer.isClanLeader());
     }
 
     @Override
     public void setTwink(String playerIdOrName, boolean status) {
         Player player = getPlayer(playerIdOrName);
+        boolean oldStatus = player.isTwink();
         player.setTwink(status);
         Player updatedPlayer = update(player);
 
-        System.out.println("Old twink status:" + player.isTwink());
+        System.out.println("Old twink status:" + oldStatus);
         System.out.println("New twink status:" + updatedPlayer.isTwink());
     }
 
@@ -148,7 +125,10 @@ public class PlayerDAOImpl implements PlayerDAO {
 
         if (playerToDelete != null) {
             JpaUtil.performWithinPersistenceContext(
-                    em -> em.remove(playerToDelete)
+                    em -> {
+                        Player merged = em.merge(playerToDelete);
+                        em.remove(merged);
+                    }
             );
         } else {
             System.out.println("Player not found");
@@ -168,8 +148,24 @@ public class PlayerDAOImpl implements PlayerDAO {
         if (isId(playerIdOrName)) {
             player = findById(Long.parseLong(playerIdOrName));//todo getReference()??????
         } else {
-            player = findByMainName(playerIdOrName);//todo tempName ?
+            player = findByTempName(playerIdOrName);
         }
         return player;
+    }
+
+    private Player findById(long id) {
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> em.createQuery("select p from Player p where p.id = :id", Player.class)
+                        .setParameter("id", id)
+                        .getSingleResult()
+        );
+    }
+
+    private Player findByTempName(String tempName) {
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> em.createQuery("select p from Player p where p.temp_name = :tempName", Player.class)
+                        .setParameter("tempName", tempName)
+                        .getSingleResult()
+        );
     }
 }

@@ -17,7 +17,7 @@ public class Clan {
 
     @NaturalId(mutable = false)
     @Column(name = "clan_name", unique = true, nullable = false)
-    private String clanName;
+    private String clan_name;
 
     @Column(name = "members")
     @OneToMany(mappedBy = "clan", orphanRemoval = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -27,7 +27,7 @@ public class Clan {
     }
 
     public Clan(String name) {
-        this.clanName = name;
+        this.clan_name = name;
     }
 
 //    public void deleteMember(Player member) {//todo спробувати видалити
@@ -40,20 +40,20 @@ public class Clan {
 //        player.setClan(this);
 //    }
 
-    public long getClan_id() {
+    public long getClanId() {
         return clan_id;
     }
 
-    public void setClan_id(long clan_id) {
+    public void setClanId(long clan_id) {
         this.clan_id = clan_id;
     }
 
     public String getClanName() {
-        return clanName;
+        return clan_name;
     }
 
     public void setClanName(String clanName) {
-        this.clanName = clanName;
+        this.clan_name = clanName;
     }
 
     public List<Player> getMembers() {
@@ -69,12 +69,12 @@ public class Clan {
         if (this == o) return true;
         if (!(o instanceof Clan)) return false;
         Clan clan = (Clan) o;
-        return clanName.equals(clan.clanName);
+        return clan_name.equals(clan.clan_name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(clanName);
+        return Objects.hash(clan_name);
         //return 10;
     }
 }
