@@ -7,13 +7,14 @@ import utils.DataUtils;
 import utils.JpaUtil;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlayerDAOImpl implements PlayerDAO {
 
     private DataUtils dataUtils = new DataUtils();
 
     @Override
-    public void save(long id) {
+    public boolean save(long id) {
         Player newPlayer = dataUtils.getNewPlayer(id);
 
         if (newPlayer != null) {
@@ -21,8 +22,9 @@ public class PlayerDAOImpl implements PlayerDAO {
                     em -> em.persist(newPlayer)
             );
         } else {
-            System.out.println("getNewPlayer(id) return NULL player");
+            throw new NullPointerException("Метод getNewPlayer(id) вернул NULL");
         }
+        return true;
     }
 
     @Override
@@ -31,15 +33,9 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public String getPlayerClan(String playerIdOrName) {
+    public Clan getPlayerClan(String playerIdOrName) {
         Player player = getPlayer(playerIdOrName);
-
-        if (player.getClan() == null) {
-            System.out.println("Player is`n in any clan.");
-            return "Player is`n in any clan.";
-        } else {
-            return player.getClan().getClanName();
-        }
+        return player.getClan();
     }
 
     @Override
@@ -61,34 +57,47 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public List<Player> findAll() { //todo implement pagination or add filters by first letter or first 100
-        return JpaUtil.performReturningWithinPersistenceContext(
+    public List<Player> findAll(String filter) {
+        List<Player> allPlayers = JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select p from Player p", Player.class)
                         .getResultList()
         );
+
+        if (filter.matches("\\d{1,}")) {        //return N first players
+            return allPlayers.stream()
+                    .limit(Long.parseLong(filter))
+                    .collect(Collectors.toList());
+        } else {
+            return allPlayers.stream()              //return all players which name starts on filter
+                    .filter(player -> player.getTempName().startsWith(filter))
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
-    public void changeTempName(String playerOldTempNameOrId, String newName) {
+    public boolean changeTempName(String playerOldTempNameOrId, String newName) {
         Player player = getPlayer(playerOldTempNameOrId);//todo робить якийсь дивний зайвий селект
         String oldName = player.getTempName();
         player.setTempName(newName);
-        Player updatedPlayer = update(player);
+        update(player);
 
-        System.out.println("Old name:" + oldName);
-        System.out.println("New name:" + updatedPlayer.getTempName());
+        return oldName.equals(newName);
     }
 
     @Override
-    public void changeClan(String playerIdOrName, Clan newClan) {
+    public boolean changeClan(String playerIdOrName, String newClanName) {
         Player player = getPlayer(playerIdOrName);
+        String oldClanName = player.getClan().getClanName();
         player.deleteFromClan();
+        Clan newClan = JpaUtil.performReturningWithinPersistenceContext(
+                em -> em.createQuery("select c from Clan c where c.clan_name = :clanName", Clan.class)
+                        .setParameter("clanName", newClanName)
+                        .getSingleResult()
+        );
         player.addToClan(newClan);
+        update(player);
 
-        Player updatedPlayer = update(player);
-
-        System.out.println("Old clan:" + player.getClan().getClanName());
-        System.out.println("New clan:" + updatedPlayer.getClan().getClanName());
+        return oldClanName.equals(newClan.getClanName());
     }
 
     @Override
@@ -144,7 +153,7 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     public Player getPlayer(String playerIdOrName) {
-        Player player = null;
+        Player player;
         if (isId(playerIdOrName)) {
             player = findById(Long.parseLong(playerIdOrName));//todo getReference()??????
         } else {
@@ -154,18 +163,30 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     private Player findById(long id) {
-        return JpaUtil.performReturningWithinPersistenceContext(
-                em -> em.createQuery("select p from Player p where p.id = :id", Player.class)
-                        .setParameter("id", id)
-                        .getSingleResult()
-        );
+        Player player = null;
+        try {
+            player = JpaUtil.performReturningWithinPersistenceContext(
+                    em -> em.createQuery("select p from Player p where p.id = :id", Player.class)
+                            .setParameter("id", id)
+                            .getSingleResult()
+            );
+        } catch (Exception e) {
+            System.out.println("11");
+        }
+        return player;
     }
 
     private Player findByTempName(String tempName) {
-        return JpaUtil.performReturningWithinPersistenceContext(
-                em -> em.createQuery("select p from Player p where p.temp_name = :tempName", Player.class)
-                        .setParameter("tempName", tempName)
-                        .getSingleResult()
-        );
+        Player player = null;
+        try {
+            player = JpaUtil.performReturningWithinPersistenceContext(
+                    em -> em.createQuery("select p from Player p where p.temp_name = :tempName", Player.class)
+                            .setParameter("tempName", tempName)
+                            .getSingleResult()
+            );
+        } catch (Exception e) {
+            System.out.println("11");
+        }
+        return player;
     }
 }

@@ -19,7 +19,7 @@ public class Player {
     private String temp_name;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "clan", referencedColumnName = "clan_name")
+    @JoinColumn(name = "clan_id")
     private Clan clan;
 
     @Column(name = "is_clan_leader")
@@ -118,14 +118,14 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
+        return "Игрок {" +
                 "id=" + id +
-                ", mainName='" + main_name + '\'' +
-                ", tempName='" + temp_name + '\'' +
-                ", clan=" + clan +
-                ", isClanLeader=" + is_clan_leader +
-                ", isTwink=" + is_twink +
-                ", profileLink='" + profile_link + '\'' +
+                ", основной никнейм='" + main_name + '\'' +
+                ", актуальный никнейм='" + temp_name + '\'' +
+                ", клан=" + clan +
+                ", лидер клана=" + is_clan_leader +
+                ", твинк=" + is_twink +
+                ", ссылка на профиль='" + profile_link + '\'' +
                 '}';
     }
 }

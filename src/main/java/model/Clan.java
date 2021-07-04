@@ -3,19 +3,19 @@ package model;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "clans")
-public class Clan {
+public class Clan{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long clan_id;
 
-    @NaturalId(mutable = false)
     @Column(name = "clan_name", unique = true, nullable = false)
     private String clan_name;
 

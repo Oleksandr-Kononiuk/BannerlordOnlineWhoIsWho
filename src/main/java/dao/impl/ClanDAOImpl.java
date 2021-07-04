@@ -6,7 +6,7 @@ import model.Player;
 import utils.JpaUtil;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.NoSuchElementException;
 
 public class ClanDAOImpl implements ClanDAO {
 
@@ -22,13 +22,14 @@ public class ClanDAOImpl implements ClanDAO {
     @Override
     public void deleteClan(String clanName) {
         Clan toDeleteClan = findByName(clanName);
-        toDeleteClan.getMembers().stream()
-                .forEach(member -> {
-                    member.setClan(null);
-                    playerDAO.update(member);
-                });
+
         JpaUtil.performWithinPersistenceContext(
-                em -> em.remove(toDeleteClan)
+                em -> {
+                    Clan merged = em.merge(toDeleteClan);
+                    merged.getMembers()
+                            .forEach(Player::deleteFromClan);
+                    em.remove(merged);
+                }
         );
     }
 
@@ -64,40 +65,40 @@ public class ClanDAOImpl implements ClanDAO {
     public String getClanLeader(String clanName) {
         return getMembers(clanName).stream()
                 .filter(Player::isClanLeader)
-                .map(Player::getMainName)
+                .map(Player::getTempName)
                 .findFirst()
                 .orElse("Not found!!!");
     }
 
     @Override
     public boolean changeClanLeader(String clanName, String oldLeaderIdOrName, String newLeaderIdOrName) {
-        List<Player> members = getMembers(clanName);
-        Player oldLeader = members.stream()
+        Clan clan = findByName(clanName);
+        List<Player> members = clan.getMembers();
+
+        members.stream()
                 .filter(Player::isClanLeader)
                 .findFirst()
-                .get();
+                .orElseThrow(() -> new NoSuchElementException("Лидер клана не найден."))
+                .setClanLeader(false);
 
-        Player newLeader = members.stream()
-                .filter(player -> player.getMainName().equals(newLeaderIdOrName) || player.getId() == Long.parseLong(newLeaderIdOrName))
+        members.stream()
+                .filter(player -> player.getTempName().equals(newLeaderIdOrName) || player.getId() == Long.parseLong(newLeaderIdOrName))
                 .findFirst()
-                .get();
+                .orElseThrow(() -> new NoSuchElementException("Кандидат в лидера клана не найден."))
+                .setClanLeader(true);
 
-        oldLeader.setClanLeader(false);
-        newLeader.setClanLeader(true);
+        JpaUtil.performWithinPersistenceContext(
+                em -> em.merge(clan)
+        );
 
-        Player old = playerDAO.update(oldLeader);
-        Player neww = playerDAO.update(newLeader);
-
-        return !old.isClanLeader() && neww.isClanLeader();
+        return true;
     }
 
     @Override
-    public List<String> getAllClans() {
+    public List<Clan> getAllClans() {
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select c from Clan c", Clan.class)
-                .getResultList().stream()
-                .map(Clan::getClanName)
-                .collect(Collectors.toList())
+                .getResultList()
         );
     }
 
