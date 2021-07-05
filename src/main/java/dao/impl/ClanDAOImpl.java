@@ -5,8 +5,10 @@ import model.Clan;
 import model.Player;
 import utils.JpaUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class ClanDAOImpl implements ClanDAO {
 
@@ -20,27 +22,37 @@ public class ClanDAOImpl implements ClanDAO {
     }
 
     @Override
-    public void deleteClan(String clanName) {
+    public boolean deleteClan(String clanName) {
         Clan toDeleteClan = findByName(clanName);
 
-        JpaUtil.performWithinPersistenceContext(
+        return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {
                     Clan merged = em.merge(toDeleteClan);
-                    merged.getMembers()
-                            .forEach(Player::deleteFromClan);
+                    for(Player p : merged.getMembers()) {
+                       p.setClan(null);
+                    }
+                    //merged.setMembers(new ArrayList<>());
                     em.remove(merged);
+                    return true;
                 }
         );
     }
 
     @Override
-    public void addMember(String clanName, String playerIdOrName) {
+    public boolean addMember(String clanName, String playerIdOrName) {
         Clan clan = findByName(clanName);
         Player player = playerDAO.getPlayer(playerIdOrName);
-        player.addToClan(clan);
-        //clan.addMember(player);
-        JpaUtil.performWithinPersistenceContext(
-                em -> em.merge(clan)
+
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> {
+                    Clan mergedClan = em.merge(clan);
+                    Player mergedPlayer = em.merge(player);
+
+                    int oldSize = mergedClan.getMembers().size();
+                    mergedClan.addMember(mergedPlayer);
+                    int newSize = mergedClan.getMembers().size();
+                    return oldSize == newSize;
+                }
         );
     }
 
@@ -48,15 +60,20 @@ public class ClanDAOImpl implements ClanDAO {
     public boolean deleteMember(String clanName, String playerIdOrName) {
         Clan clan = findByName(clanName);
         Player player = playerDAO.getPlayer(playerIdOrName);
-        player.deleteFromClan();
-        //clan.deleteMember(player);
-        Clan isDeleted = JpaUtil.performReturningWithinPersistenceContext(
-                em -> em.merge(clan)
+
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> {
+                    Clan mergedClan = em.merge(clan);
+                    Player mergedPlayer = em.merge(player);
+
+                    int oldSize = mergedClan.getMembers().size();
+                    mergedClan.deleteMember(mergedPlayer);
+                    int newSize = mergedClan.getMembers().size();
+                    return oldSize == newSize;
+                }
         );
-        return clan.getMembers().size() != isDeleted.getMembers().size(); //todo improve перевірку на видалення
     }
 
-    @Override
     public List<Player> getMembers(String clanName) {
         return findByName(clanName).getMembers();
     }
@@ -67,39 +84,48 @@ public class ClanDAOImpl implements ClanDAO {
                 .filter(Player::isClanLeader)
                 .map(Player::getTempName)
                 .findFirst()
-                .orElse("Not found!!!");
+                .orElseThrow(NullPointerException::new);
     }
 
     @Override
     public boolean changeClanLeader(String clanName, String oldLeaderIdOrName, String newLeaderIdOrName) {
         Clan clan = findByName(clanName);
-        List<Player> members = clan.getMembers();
 
-        members.stream()
-                .filter(Player::isClanLeader)
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Лидер клана не найден."))
-                .setClanLeader(false);
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> {
+                    Clan mergedClan = em.merge(clan);
 
-        members.stream()
-                .filter(player -> player.getTempName().equals(newLeaderIdOrName) || player.getId() == Long.parseLong(newLeaderIdOrName))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Кандидат в лидера клана не найден."))
-                .setClanLeader(true);
+                    mergedClan.getMembers().stream()
+                            .filter(Player::isClanLeader)
+                            .findFirst()
+                            .orElseThrow(() -> new NoSuchElementException("Лидер клана не найден в списке мемберов."))
+                            .setClanLeader(false);
 
-        JpaUtil.performWithinPersistenceContext(
-                em -> em.merge(clan)
+                    mergedClan.getMembers().stream()
+                            .filter(player -> player.getTempName().equals(newLeaderIdOrName) || player.getId() == Long.parseLong(newLeaderIdOrName))
+                            .findFirst()
+                            .orElseThrow(() -> new NoSuchElementException("Кандидат в лидера клана не найден в списке мемберов."))
+                            .setClanLeader(true);
+                    return true;
+                }
         );
-
-        return true;
     }
 
     @Override
-    public List<Clan> getAllClans() {
-        return JpaUtil.performReturningWithinPersistenceContext(
+    public List<Clan> getAllClans(String filter) {
+        List<Clan> allClans =  JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select c from Clan c", Clan.class)
                 .getResultList()
         );
+        if (filter.matches("\\d{1,}")) {        //return N first clans
+            return allClans.stream()
+                    .limit(Long.parseLong(filter))
+                    .collect(Collectors.toList());
+        } else {
+            return allClans.stream()              //return all clans which name starts on filter
+                    .filter(clan -> clan.getClanName().startsWith(filter))
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override

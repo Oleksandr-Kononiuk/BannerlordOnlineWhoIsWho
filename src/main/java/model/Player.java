@@ -31,20 +31,18 @@ public class Player {
     @Column(name = "profile_link", nullable = false)
     private String profile_link;
 
-//todo добавити поле з датою останььго онлайну
-
     public Player() {
     }
 
-    public void deleteFromClan() {
-        this.getClan().getMembers().remove(this);
-        this.setClan(null);
-    }
-
-    public void addToClan(Clan clan) {
-        this.setClan(clan);
-        this.getClan().getMembers().add(this);
-    }
+//    public void deleteFromClan() {
+//        this.getClan().getMembers().remove(this);
+//        this.setClan(null);
+//    }
+//
+//    public void addToClan(Clan clan) {
+//        this.setClan(clan);
+//        this.getClan().getMembers().add(this);
+//    }
 
     public long getId() {
         return id;
@@ -122,7 +120,7 @@ public class Player {
                 "id=" + id +
                 ", основной никнейм='" + main_name + '\'' +
                 ", актуальный никнейм='" + temp_name + '\'' +
-                ", клан=" + clan +
+                ", клан='" + (clan != null ? clan.getClanName() : null) + '\'' +
                 ", лидер клана=" + is_clan_leader +
                 ", твинк=" + is_twink +
                 ", ссылка на профиль='" + profile_link + '\'' +

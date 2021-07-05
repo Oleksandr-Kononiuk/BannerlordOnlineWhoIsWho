@@ -20,7 +20,7 @@ public class View {
                 String.format("Clan name: '%s'. Clan size: '%d'", c.getClanName(), c.getMembers().size()));
 
         if (c.getMembers().size() > 0) {
-            out.append("\nMembers:");
+            out.append("\nMembers:\n");
             for (Player p : c.getMembers()) {
                 out.append(p.toString() + "\n");
             }

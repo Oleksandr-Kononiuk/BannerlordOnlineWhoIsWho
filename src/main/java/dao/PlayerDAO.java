@@ -11,11 +11,11 @@ public interface PlayerDAO {
     Player find(String playerIdOrName);
     Clan getPlayerClan(String playerIdOrName);
     boolean isClanLeader(String playerIdOrName);
-    void setClanLeader(String playerIdOrName, boolean status);
+    boolean setClanLeader(String playerIdOrName, boolean status);
     boolean isTwink(String playerIdOrName);
-    void setTwink(String playerIdOrName, boolean status);
+    boolean setTwink(String playerIdOrName, boolean status);
     List<Player> findAll(String filter);
     boolean changeTempName(String playerOldTempNameOrId, String newName);
     boolean changeClan(String playerIdOrName, String newClan);
-    void delete(String playerIdOrName);
+    boolean delete(String playerIdOrName);
 }

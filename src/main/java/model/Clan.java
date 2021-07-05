@@ -1,9 +1,6 @@
 package model;
 
-import org.hibernate.annotations.NaturalId;
-
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +17,7 @@ public class Clan{
     private String clan_name;
 
     @Column(name = "members")
-    @OneToMany(mappedBy = "clan", orphanRemoval = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clan", orphanRemoval = false, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<Player> members = new ArrayList<>();
 
     public Clan() {
@@ -30,15 +27,15 @@ public class Clan{
         this.clan_name = name;
     }
 
-//    public void deleteMember(Player member) {//todo спробувати видалити
-//        this.getMembers().remove(member);
-//        member.setClan(null);
-//    }
-//
-//    public void addMember(Player player) {//todo спробувати видалити
-//        this.getMembers().add(player);
-//        player.setClan(this);
-//    }
+    public void deleteMember(Player player) {
+        members.remove(player);
+        player.setClan(null);
+    }
+
+    public void addMember(Player player) {
+        members.add(player);
+        player.setClan(this);
+    }
 
     public long getClanId() {
         return clan_id;

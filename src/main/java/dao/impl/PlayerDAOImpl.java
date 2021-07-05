@@ -15,6 +15,8 @@ public class PlayerDAOImpl implements PlayerDAO {
 
     @Override
     public boolean save(long id) {
+        if (id < 0) throw new IllegalArgumentException("Id не может быть отрицательным.");
+
         Player newPlayer = dataUtils.getNewPlayer(id);
 
         if (newPlayer != null) {
@@ -88,38 +90,36 @@ public class PlayerDAOImpl implements PlayerDAO {
     public boolean changeClan(String playerIdOrName, String newClanName) {
         Player player = getPlayer(playerIdOrName);
         String oldClanName = player.getClan().getClanName();
-        player.deleteFromClan();
+        //player.deleteFromClan();
         Clan newClan = JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select c from Clan c where c.clan_name = :clanName", Clan.class)
                         .setParameter("clanName", newClanName)
                         .getSingleResult()
         );
-        player.addToClan(newClan);
+        //player.addToClan(newClan);
         update(player);
 
         return oldClanName.equals(newClan.getClanName());
     }
 
     @Override
-    public void setClanLeader(String playerIdOrName, boolean status) {
+    public boolean setClanLeader(String playerIdOrName, boolean status) {
         Player player = getPlayer(playerIdOrName);
         boolean oldStatus = player.isClanLeader();
         player.setClanLeader(status);
         Player updatedPlayer = update(player);
 
-        System.out.println("Old leader status:" + oldStatus);
-        System.out.println("New leader status:" + updatedPlayer.isClanLeader());
+        return oldStatus == updatedPlayer.isClanLeader();//true не змінилось
     }
 
     @Override
-    public void setTwink(String playerIdOrName, boolean status) {
+    public boolean setTwink(String playerIdOrName, boolean status) {
         Player player = getPlayer(playerIdOrName);
         boolean oldStatus = player.isTwink();
         player.setTwink(status);
         Player updatedPlayer = update(player);
 
-        System.out.println("Old twink status:" + oldStatus);
-        System.out.println("New twink status:" + updatedPlayer.isTwink());
+        return oldStatus == updatedPlayer.isTwink();//true не змінилось
     }
 
     public Player update(Player player) {
@@ -129,19 +129,16 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public void delete(String playerIdOrName) {
+    public boolean delete(String playerIdOrName) {
         Player playerToDelete = getPlayer(playerIdOrName);
 
-        if (playerToDelete != null) {
-            JpaUtil.performWithinPersistenceContext(
-                    em -> {
-                        Player merged = em.merge(playerToDelete);
-                        em.remove(merged);
-                    }
-            );
-        } else {
-            System.out.println("Player not found");
-        }
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> {
+                    Player merged = em.merge(playerToDelete);
+                    em.remove(merged);
+                    return true;
+                }
+        );
     }
 
 
@@ -164,15 +161,11 @@ public class PlayerDAOImpl implements PlayerDAO {
 
     private Player findById(long id) {
         Player player = null;
-        try {
-            player = JpaUtil.performReturningWithinPersistenceContext(
-                    em -> em.createQuery("select p from Player p where p.id = :id", Player.class)
-                            .setParameter("id", id)
-                            .getSingleResult()
-            );
-        } catch (Exception e) {
-            System.out.println("11");
-        }
+        player = JpaUtil.performReturningWithinPersistenceContext(
+                em -> em.createQuery("select p from Player p where p.id = :id", Player.class)
+                        .setParameter("id", id)
+                        .getSingleResult()
+        );
         return player;
     }
 
