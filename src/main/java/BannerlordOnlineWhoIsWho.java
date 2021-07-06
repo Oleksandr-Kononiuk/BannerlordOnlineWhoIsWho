@@ -4,11 +4,12 @@ import dao.impl.ClanDAOImpl;
 import dao.impl.PlayerDAOImpl;
 import model.Clan;
 import model.Player;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 import utils.DataUtils;
 import utils.JpaUtil;
 import utils.View;
 
-import javax.crypto.spec.DESKeySpec;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import java.io.BufferedReader;
@@ -42,6 +43,8 @@ public class BannerlordOnlineWhoIsWho {
         JpaUtil.init("BannerlordOnlinePlayersMySQL"); // initialize database
         BannerlordOnlineWhoIsWho BOWIW = new BannerlordOnlineWhoIsWho();
         BOWIW.test();
+
+        //JDA jda = JDABuilder.
 
         //BOWIW.dataUtils.getNewPlayer(1);
 
