@@ -28,7 +28,7 @@ public class View {
         return out.toString();
     }
 
-    public void print(String s) {
-        System.out.println(s);
+    public String print(String s) { //todo заглушка
+        return s;
     }
 }
