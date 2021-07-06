@@ -112,127 +112,127 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
             case "save":
                 try {
                     playerDAO.save(Long.parseLong(args[0]));
-                    return view.print("Игрок добавлен.");
+                    return "Игрок добавлен.";
                 } catch (PersistenceException p) {
-                    return view.print("Игрок уже существует в базе.");
+                    return "Игрок уже существует в базе.";
                 } catch (NumberFormatException n) {
-                    return view.print("Входной параметр не цифра.");
+                    return "Входной параметр не цифра.";
                 } catch (IllegalArgumentException i) {
-                    return view.print("Id не может быть отрицательным.");
+                    return "Id не может быть отрицательным.";
                 } catch (Exception e) {
-                    return view.print("Игрок не найден. " + e.getMessage());
+                    return "Игрок не найден. " + e.getMessage();
                 }
             case "find":
                 try {
                     Player p = playerDAO.find(args[0]);
-                    return view.print(view.toStringPlayer(p));
+                    return view.toStringPlayer(p);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return view.print("Игрок не найден. " + e.getMessage());
+                    return "Игрок не найден. " + e.getMessage();
                 }
             case "clan":
                 try {
                     Clan clan = playerDAO.getPlayerClan(args[0]);
                     if (clan == null) {
-                        return view.print("Игрок не состоит в клане.");
+                        return "Игрок не состоит в клане.";
                     } else {
-                        return view.print(view.toStringClan(clan));
+                        return view.toStringClan(clan);
                     }
                 } catch (Exception e) {
-                    return view.print("Игрок не найден. " + e.getMessage());
+                    return "Игрок не найден. " + e.getMessage();
                 }
             case "leader":
                 try {
                     boolean isLeader = playerDAO.isClanLeader(args[0]);
                     if (isLeader) {
-                        return view.print("Игрок лидер клана.");
+                        return "Игрок лидер клана.";
                     } else {
-                        return view.print("Игрок не лидер клана.");
+                        return "Игрок не лидер клана.";
                     }
                 } catch (Exception e) {
-                    return view.print("Игрок не найден. " + e.getMessage());
+                    return "Игрок не найден. " + e.getMessage();
                 }
             case "twink":
                 try {
                     boolean isTwink = playerDAO.isTwink(args[0]);
                     if (isTwink) {
-                        return view.print("Аккаунт твинк.");
+                        return "Аккаунт твинк.";
                     } else {
-                        return view.print("Аккаунт не твинк.");
+                        return "Аккаунт не твинк.";
                     }
                 } catch (Exception e) {
-                    return view.print("Игрок не найден. " + e.getMessage());
+                    return "Игрок не найден. " + e.getMessage();
                 }
             case "all":
                 try {
                     List<Player> players = playerDAO.findAll(args[0]);
                     if (players.size() > 0) {
                         for (Player p : players) {
-                            return view.print(view.toStringPlayer(p));
+                            return view.toStringPlayer(p);
                         }
                     }
                 } catch (Exception e) {
-                    return view.print("По запросу игроков не найдено. " + e.getMessage());
+                    return "По запросу игроков не найдено. " + e.getMessage();
                 }
             case "change_name":
                 try {
                     boolean isChanged = playerDAO.changeTempName(args[0], args[1]);
                     if (!isChanged) {
-                        return view.print("Имя игрока изменено.");
+                        return "Имя игрока изменено.";
                     } else {
-                        return view.print("Имя игрока не изменено.");
+                        return "Имя игрока не изменено.";
                     }
                 } catch (Exception e) {
-                    return view.print("Игрок не найден. " + e.getMessage());
+                    return "Игрок не найден. " + e.getMessage();
                 }
             case "change_clan":
                 try {
                     boolean isChanged = playerDAO.changeClan(args[0], args[1]);
 
                     if (!isChanged) {
-                        return view.print("Клан игрока изменен.");
+                        return "Клан игрока изменен.";
                     } else {
-                        return view.print("Клан игрока не изменен.");
+                        return "Клан игрока не изменен.";
                     }
                 } catch (Exception e) {
-                    return view.print("Игрок не найден. " + e.getMessage());
+                    return "Игрок не найден. " + e.getMessage();
                 }
             case "set_leader":
                 try {
                     boolean isChanged = playerDAO.setClanLeader(args[0], Boolean.parseBoolean(args[1]));
                     if (!isChanged) {
-                        return view.print("Статус лидера изменен.");
+                        return "Статус лидера изменен.";
                     } else {
-                        return view.print("Статус лидера не изменен.");
+                        return "Статус лидера не изменен.";
                     }
                 } catch (Exception e) {
-                    return view.print("Игрок не найден. " + e.getMessage());
+                    return "Игрок не найден. " + e.getMessage();
                 }
             case "set_twink":
                 try {
                     boolean isChanged = playerDAO.setTwink(args[0], Boolean.parseBoolean(args[1]));
                     if (!isChanged) {
-                        return view.print("Статус твинка изменен.");
+                        return "Статус твинка изменен.";
                     } else {
-                        return view.print("Статус твинка не изменен.");
+                        return "Статус твинка не изменен.";
                     }
                 } catch (Exception e) {
-                    return view.print("Игрок не найден. " + e.getMessage());
+                    return "Игрок не найден. " + e.getMessage();
                 }
             case "delete":
                 try {
                     boolean isDeleted = playerDAO.delete(args[0]);
                     if (isDeleted) {
-                        return view.print("Игрок удален.");
+                        return "Игрок удален.";
                     } else {
-                        return view.print("Игрок не удален.");
+                        return "Игрок не удален.";
                     }
                 } catch (Exception e) {
-                    return view.print("Игрок не найден. " + e.getMessage());
+                    return "Игрок не найден. " + e.getMessage();
                 }
             default:
                 System.out.println("Maybe wrong command format. Please try again.");
-                return view.print("Maybe wrong command format. Please try again.");
+                return "Возможно неправильный формат команды. Попробуйте еще раз.";
         }
     }
 
@@ -241,109 +241,106 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
             case "new":
                 try {
                     clanDAO.addNewClan(args[0]);
-                    return view.print("Клан добавлен.");
+                    return "Клан добавлен.";
                 } catch (Exception e) {
-                    return view.print("Клан не найден. " + e.getMessage());
+                    return "Клан не найден. " + e.getMessage();
                 }
             case "delete":
                 try {
                     boolean isDeleted = clanDAO.deleteClan(args[0]);
                     if (isDeleted) {
-                        return view.print("Клан удален.");
+                        return "Клан удален.";
                     } else {
-                        return view.print("Клан не удален.");
+                        return "Клан не удален.";
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return view.print("Клан не найден. " + e.getMessage());
+                    return "Клан не найден. " + e.getMessage();
                 }
             case "add_member":
                 try {
                     boolean isAdded = clanDAO.addMember(args[0], args[1]);
                     if (!isAdded) {
-                        return view.print("Игрок добавлен в состав клана.");
+                        return "Игрок добавлен в состав клана.";
                     } else {
-                        return view.print("Игрок не добавлен в состав клана.");
+                        return "Игрок не добавлен в состав клана.";
                     }
                 } catch (NoResultException n) {
-                    return view.print("Игрок не найден. " + n.getMessage());
+                    return "Игрок не найден. " + n.getMessage();
                 } catch (Exception e) {
-                    return view.print("Клан не найден. " + e.getMessage());
+                    return "Клан не найден. " + e.getMessage();
                 }
             case "delete_member":
                 try {
                     boolean isDeleted = clanDAO.deleteMember(args[0], args[1]);
                     if (!isDeleted) {
-                        return view.print("Игрок удален из состав клана.");
+                        return "Игрок удален из состав клана.";
                     } else {
-                        return view.print("Игрок не удален из состав клана.");
+                        return "Игрок не удален из состав клана.";
                     }
                 } catch (NoResultException n) {
-                    return view.print("Игрок не найден. " + n.getMessage());
+                    return "Игрок не найден. " + n.getMessage();
                 } catch (Exception e) {
-                    return view.print("Клан не найден. " + e.getMessage());
+                    return "Клан не найден. " + e.getMessage();
                 }
             case "leader":
                 try {
                     String clanLeader = clanDAO.getClanLeader(args[0]);
-                    return view.print(clanLeader);
+                    return "Лидер клана: " + clanLeader;
                 } catch (NullPointerException n) {
-                    return view.print("Клан пустой или лидера не пометили. " + n.getMessage());
+                    return "Клан пустой или лидера не пометили. " + n.getMessage();
                 } catch (Exception e) {
-                    return view.print("Клан не найден. " + e.getMessage());
+                    return "Клан не найден. " + e.getMessage();
                 }
             case "change_leader":
                 try {
                     boolean isChanged = clanDAO.changeClanLeader(args[0], args[1], args[2]);
                     if (isChanged) {
-                        return view.print("Лидер сменен.");
+                        return "Лидер сменен.";
                     } else {
-                        return view.print("Лидер не сменен.");
+                        return "Лидер не сменен.";
                     }
                 } catch (NoSuchElementException n) {
-                    return view.print("Клан пустой или " + n.getMessage());
+                    return "Клан пустой или " + n.getMessage();
                 } catch (Exception e) {
-                    return view.print("Клан не найден. " + e.getMessage());
+                    return "Клан не найден. " + e.getMessage();
                 }
             case "all":
                 try {
                     List<Clan> clans = clanDAO.getAllClans(args[0]);
                     if (clans.size() > 0) {
                         for (Clan c : clans) {
-                            return view.print(view.toStringClan(c));
+                            return view.toStringClan(c);
                         }
                     }
                 } catch (Exception e) {
-                   return view.print("По запросу кланов не найдено. " + e.getMessage());
+                    return "По запросу кланов не найдено. " + e.getMessage();
                 }
             case "find":
                 try {
                     Clan clan = clanDAO.findByName(args[0]);
                     if (clan != null) {
-                        return view.print(view.toStringClan(clan));
+                        return view.toStringClan(clan);
                     }
                 } catch (Exception e) {
-                    return view.print("Клан не найден. " + e.getMessage());
+                    return "Клан не найден. " + e.getMessage();
                 }
             default:
                 System.out.println("Maybe wrong command format. Please try again.");
-                return view.print("Maybe wrong command format. Please try again.");
+                return "Возможно неправильный формат команды. Попробуйте еще раз.";
         }
     }
 
-    //private void parseCommand() {
     private String parseCommand(String command) {
         //String command = getCommand();
-        //String command = com;
 
         String[] words = command.split(" ");
         //System.out.println(words.length);
-
         //if (words[0].startsWith("!exit")) System.exit(0);;
 
         if (validateCommand(words)) {
             String[] args = Arrays.copyOfRange(words, 2, words.length);
-            System.out.println("Входние аргументи: " + Arrays.toString(args));
+            System.out.println("Входные аргументы: " + Arrays.toString(args));
 
             switch (words[0].toLowerCase()) {
                 case "!player":
@@ -351,23 +348,11 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 case "!clan":
                     return clanCommands(words[1], args);
                 default:
-                    return "Maybe wrong command format. Please try again.";
+                    return "Возможно неправильный формат команды. Попробуйте еще раз.";
             }
         } else {
-            return "Maybe wrong command format. Please try again.";
+            return "Возможно неправильный формат команды. Попробуйте еще раз.";
         }
-    }
-
-    private String getCommand() {
-        System.out.println("Enter command: ");
-        String command = "";
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            command = reader.readLine();
-        } catch (IOException e) {
-            //logger.error(Arrays.toString(e.getStackTrace()));
-            e.printStackTrace();
-        }
-        return command;
     }
 
     private boolean validateCommand(String[] command) {
@@ -380,6 +365,18 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
             return false;
         }
         return true;
+    }
+
+    private String getCommand() {
+        System.out.println("Enter command: ");
+        String command = "";
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+            command = reader.readLine();
+        } catch (IOException e) {
+            //logger.error(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
+        }
+        return command;
     }
 
     private void fillDB(int from, int to) {

@@ -116,14 +116,21 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Игрок {" +
-                "id=" + id +
-                ", основной никнейм='" + main_name + '\'' +
-                ", актуальный никнейм='" + temp_name + '\'' +
-                ", клан='" + (clan != null ? clan.getClanName() : null) + '\'' +
-                ", лидер клана=" + is_clan_leader +
-                ", твинк=" + is_twink +
-                ", ссылка на профиль='" + profile_link + '\'' +
-                '}';
+        return  "```css\n" +
+                "id: '" + id + "'" +
+                ", Основной ник '" + main_name + "'" +
+                ", Актуальный ник '" + temp_name + "'" +
+                ", Клан '" + (clan != null ? clan.getClanName() : "отсуствует") + "'" +
+                ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
+                ", Твинк '" + (is_twink ? "Да" : "Нет") + "'\n" +
+                "Ссылка на профиль '" + profile_link + "'\n" +
+                "```";
+    }
+
+    public String toClanMemberString() {
+        return  "Основной ник '" + main_name + "'" +
+                ", Актуальный ник '" + temp_name + "'" +
+                ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
+                ", Твинк '" + (is_twink ? "Да" : "Нет") + "'";
     }
 }
