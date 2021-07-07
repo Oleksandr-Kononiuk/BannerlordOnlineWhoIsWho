@@ -77,9 +77,10 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public boolean changeTempName(String playerOldTempNameOrId, String newName) {
+    public boolean changeTempName(String playerOldTempNameOrId, String[] newNameArray) {
         Player player = getPlayer(playerOldTempNameOrId);//todo робить якийсь дивний зайвий селект
         String oldName = player.getTempName();
+        String newName = buildStringFromArgs(newNameArray);
         player.setTempName(newName);
         update(player);
 
@@ -89,17 +90,17 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public boolean changeClan(String playerIdOrName, String newClanName) {
         Player player = getPlayer(playerIdOrName);
-        String oldClanName = player.getClan().getClanName();
-        //player.deleteFromClan();
+        String oldClanName = (player.getClan() == null ? "": player.getClan().getClanName());
+        //System.out.println(oldClanName);
         Clan newClan = JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select c from Clan c where c.clan_name = :clanName", Clan.class)
                         .setParameter("clanName", newClanName)
                         .getSingleResult()
         );
-        //player.addToClan(newClan);
+        player.setClan(newClan);
         update(player);
 
-        return oldClanName.equals(newClan.getClanName());
+        return oldClanName.equals(player.getClan().getClanName());
     }
 
     @Override
@@ -129,8 +130,8 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public boolean delete(String playerIdOrName) {
-        Player playerToDelete = getPlayer(playerIdOrName);
+    public boolean delete(Long playerId) {
+        Player playerToDelete = findById(playerId);
 
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {
@@ -141,6 +142,16 @@ public class PlayerDAOImpl implements PlayerDAO {
         );
     }
 
+    private String buildStringFromArgs(String[] array) {
+        String result = "";
+        if (array.length == 2) return array[1];
+
+        for (int i = 1; i < array.length; i++) {
+            result = result.concat(array[i]);
+            result = result.concat(" ");
+        }
+        return result.trim();
+    }
 
     private boolean isId(String playerIdOrName) {
         if (playerIdOrName.matches("\\D")) { //contain any non-digit character

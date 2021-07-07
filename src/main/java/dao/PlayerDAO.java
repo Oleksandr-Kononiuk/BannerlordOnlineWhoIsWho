@@ -15,7 +15,7 @@ public interface PlayerDAO {
     boolean isTwink(String playerIdOrName);
     boolean setTwink(String playerIdOrName, boolean status);
     List<Player> findAll(String filter);
-    boolean changeTempName(String playerOldTempNameOrId, String newName);
+    boolean changeTempName(String playerOldTempNameOrId, String[] newName);
     boolean changeClan(String playerIdOrName, String newClan);
-    boolean delete(String playerIdOrName);
+    boolean delete(Long playerId);
 }

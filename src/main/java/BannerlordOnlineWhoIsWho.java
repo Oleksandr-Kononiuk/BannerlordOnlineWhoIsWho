@@ -1,4 +1,3 @@
-import bot.Bot;
 import dao.ClanDAO;
 import dao.PlayerDAO;
 import dao.impl.ClanDAOImpl;
@@ -16,7 +15,7 @@ import utils.JpaUtil;
 import utils.View;
 
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
 import javax.security.auth.login.LoginException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private final View view = new View();
 
     private static final String BOT_TOKEN = "ODYxOTI0MjcwMDYxMjU2NzA0.YOQ3hw.h8tBbMsPKYog0pKr8aY-nypu4Os";
-    private static final int ACCESS_ROLE_POSITION = 1;
+    private static final int[] ACCESS_ROLE_POSITION = new int[]{9, 10, 11, 12, 13, 14};
     private static final String WRONG_FORMAT = "> Возможно неправильный формат команды. Попробуйте еще раз.";
 
     public static void main(String[] args) {
@@ -61,17 +60,6 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
         }
     }
 
-    public static JDA init() {
-        JDA jda = null;
-        try {
-            jda = JDABuilder.createDefault(BOT_TOKEN).build();
-            jda.addEventListener(new Bot());
-        } catch (LoginException e) {
-            e.printStackTrace();
-        }
-        return jda;
-    }
-
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (checkChanel(event) && checkPermissions(event)) {
@@ -91,7 +79,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private boolean checkChanel(MessageReceivedEvent event) {
         System.out.println("Chanel name: " + event.getChannel().getName());
 
-        return event.getChannel().getName().equals("commands");
+        return event.getChannel().getName().equals("commands") || event.getChannel().getName().equals("feedback");
     }
 
     private boolean checkPermissions(MessageReceivedEvent event) {
@@ -102,7 +90,9 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
             System.out.println("User role position: " + role.getPosition());
         }
         for (Role role : event.getMember().getRoles()) {
-            if (role.getPosition() == ACCESS_ROLE_POSITION) return true;
+            for (int perm : ACCESS_ROLE_POSITION) {
+                if (role.getPosition() == perm) return true;
+            }
         }
         return false;
     }
@@ -110,11 +100,11 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private String playerCommands(String command, String[] args) {
         switch (command.toLowerCase()) {
 
-            case "save":
+            case "save"://+-
                 try {
                     playerDAO.save(Long.parseLong(args[0]));
                     return "> Игрок добавлен.";
-                } catch (PersistenceException p) {
+                } catch (RollbackException p) {
                     return "> Игрок уже существует в базе.";
                 } catch (NumberFormatException n) {
                     return "> Входной параметр не цифра.";
@@ -123,26 +113,21 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
-            case "find":
+            case "find"://+
                 try {
                     Player p = playerDAO.find(args[0]);
                     return view.toStringPlayer(p);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     return playerNotFoundString(e);
                 }
-            case "clan":
+            case "clan"://+
                 try {
                     Clan clan = playerDAO.getPlayerClan(args[0]);
-                    if (clan == null) {
-                        return "> Игрок не состоит в клане.";
-                    } else {
-                        return view.toStringClan(clan);
-                    }
+                    return (clan == null ? "> Игрок не состоит в клане." : view.toStringClan(clan));
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
-            case "leader":
+            case "leader"://+
                 try {
                     boolean isLeader = playerDAO.isClanLeader(args[0]);
                     return String.format("> Игрок%s лидер клана.", (isLeader ? "" : " не"));
@@ -156,50 +141,66 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
-            case "all":
+            case "all"://+
                 try {
                     List<Player> players = playerDAO.findAll(args[0]);
                     if (players.size() > 0) {
+                        StringBuilder resultOut = new StringBuilder();
+                        int count = 0;
                         for (Player p : players) {
-                            return view.toStringPlayer(p);
+                            if (count > 8) break; // first 9 result line
+
+                            resultOut.append(view.toStringPlayer(p));
+                            resultOut.append("\n");
+                            count++;
                         }
+                        return resultOut.toString();
                     }
                 } catch (Exception e) {
                     return "> По запросу игроков не найдено. Причина: " + e.getMessage();
                 }
-            case "change_name":
+            case "change_name"://+
                 try {
-                    boolean isChanged = playerDAO.changeTempName(args[0], args[1]);
-                    return String.format("> Имя игрока%s изменено.", (isChanged ? "" : " не"));
+                    boolean isChanged = playerDAO.changeTempName(args[0], args);
+                    return String.format("> Имя игрока%s изменено.", (!isChanged ? "" : " не"));
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
-            case "change_clan":
+            case "change_clan"://+
                 try {
                     boolean isChanged = playerDAO.changeClan(args[0], args[1]);
-                    return String.format("> Клан игрока%s изменен.", (isChanged ? "" : " не"));
+                    return String.format("> Клан игрока%s изменен.", (!isChanged ? "" : " не"));
                 } catch (Exception e) {
+                    e.printStackTrace();
                     return playerNotFoundString(e);
                 }
-            case "set_leader":
+            case "set_leader"://+-     //todo перевірку чи в клані //todo добавити арсинг args[1], бо в parseBoolean "true".equalsIgnoreCase(s)
                 try {
                     boolean isChanged = playerDAO.setClanLeader(args[0], Boolean.parseBoolean(args[1]));
-                    return String.format("> Статус лидера%s изменен.", (isChanged ? "" : " не"));
-                } catch (Exception e) {
+                    return String.format("> Статус лидера%s изменен.", (!isChanged ? "" : " не"));
+                } catch (IndexOutOfBoundsException e) {
+                    return "> Значение статуса не указано. true - если лидер, false - если нет.";
+                }catch (Exception e) {
+                    e.printStackTrace();
                     return playerNotFoundString(e);
                 }
-            case "set_twink":
+            case "set_twink"://+-
                 try {
                     boolean isChanged = playerDAO.setTwink(args[0], Boolean.parseBoolean(args[1]));
-                    return String.format("> Статус твинка%s изменен.", (isChanged ? "" : " не"));
+                    return String.format("> Статус твинка%s изменен.", (!isChanged ? "" : " не"));
+                } catch (IndexOutOfBoundsException e) {
+                    return "> Значение статуса не указано. True - если твинк, false - если нет.";
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
-            case "delete":
+            case "delete"://+
                 try {
-                    boolean isDeleted = playerDAO.delete(args[0]);
+                    boolean isDeleted = playerDAO.delete(Long.parseLong(args[0]));
                     return String.format("> Игрок%s удален.", (isDeleted ? "" : " не"));
+                } catch (IllegalArgumentException i) {
+                    return "> Id отрицательный или не цифра.";
                 } catch (Exception e) {
+                    e.printStackTrace();
                     return playerNotFoundString(e);
                 }
             default:

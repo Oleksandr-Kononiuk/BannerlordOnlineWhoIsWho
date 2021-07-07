@@ -26,7 +26,7 @@ public class DataUtils {
         return players;
     }
 
-    public Player getNewPlayer(long id) {
+    public Player getNewPlayer(long id) { // todo імена з двох слів додає неправильно. Запамятовує тільки перше слово
         Player player = null;
 
         Document doc = getDocument(PROFILE_LINK + id);
