@@ -129,7 +129,7 @@ public class Player {
                 "```";
     }
 
-    public String toClanMemberString() {
+    public String toClanMemberString() {//todo id
         return  "Основной ник '" + main_name + "'" +
                 ", Актуальный ник '" + temp_name + "'" +
                 ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +

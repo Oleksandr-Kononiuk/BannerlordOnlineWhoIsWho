@@ -147,7 +147,7 @@ public class PlayerDAOImpl implements PlayerDAO {
         );
     }
 
-    private String buildStringFromArgs(String[] array) {
+    public String buildStringFromArgs(String[] array) {
         String result = "";
 
         for (int i = 0; i < array.length; i++) {

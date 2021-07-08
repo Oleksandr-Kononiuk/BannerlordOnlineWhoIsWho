@@ -218,7 +218,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }
-            case "delete": //+- //todo добавити видалення статусу  всіх кланлідерів
+            case "delete": //+- //todo добавити видалення статусу всіх кланлідерів
                 try {
                     boolean isDeleted = clanDAO.deleteClan(args[0]);
                     return String.format("> Клан%s удален.", (isDeleted ? "" : " не"));
@@ -226,49 +226,58 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                     e.printStackTrace();
                     return clanNotFoundString(e);
                 }
-            case "add_member":
+            case "add_member"://+
                 try {
-                    boolean isAdded = clanDAO.addMember(args[0], args[1]);
-                    return String.format("> Игрок%s добавлен в состав клана.", (isAdded ? "" : " не"));
+                    boolean isAdded = clanDAO.addMember(args[0], Arrays.copyOfRange(args, 1, args.length));
+                    return String.format("> Игрок%s добавлен в состав клана.", (!isAdded ? "" : " не"));
                 } catch (NoResultException n) {
                     return playerNotFoundString(n);
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }
-            case "delete_member":
+            case "delete_member"://+
                 try {
-                    boolean isDeleted = clanDAO.deleteMember(args[0], args[1]);
-                    return String.format("> Игрок%s удален из состав клана.", (isDeleted ? "" : " не"));
+                    boolean isDeleted = clanDAO.deleteMember(args[0], Long.parseLong(args[1]));
+                    return String.format("> Игрок%s удален из состав клана.", (!isDeleted ? "" : " не"));
+                } catch (IllegalArgumentException i) {
+                    return "> Id отрицательный или не цифра.";
                 } catch (NoResultException n) {
                     return playerNotFoundString(n);
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }
-            case "leader":
+            case "leader"://+
                 try {
                     String clanLeader = clanDAO.getClanLeader(args[0]);
-                    return "Лидер клана: " + clanLeader;//todo  asdasdadadsadasd
+                    return "```css\n Лидер клана [" + clanLeader + "]```";
                 } catch (NullPointerException n) {
                     return "> Клан пустой или лидера не пометили. " + n.getMessage();
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }
-            case "change_leader":
+            case "change_leader"://+
                 try {
-                    boolean isChanged = clanDAO.changeClanLeader(args[0], args[1], args[2]);
+                    boolean isChanged = clanDAO.changeClanLeader(args[0], Long.parseLong(args[1]), Long.parseLong(args[2]));
                     return String.format("> Лидер%s сменен.", (isChanged ? "" : " не"));
                 } catch (NoSuchElementException n) {
                     return "> Клан пустой или " + n.getMessage();
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }
-            case "all":
+            case "all"://+
                 try {
                     List<Clan> clans = clanDAO.getAllClans(args[0]);
                     if (clans.size() > 0) {
+                        StringBuilder resultOut = new StringBuilder();
+                        //int count = 0;
                         for (Clan c : clans) {
-                            return view.toStringClan(c);
+                            //if (count > 8) break; // first 9 result line
+
+                            resultOut.append(view.toStringClan(c));
+                            resultOut.append("\n");
+                            //count++;
                         }
+                        return resultOut.toString();
                     }
                 } catch (Exception e) {
                     return "> По запросу кланов не найдено. " + e.getMessage();

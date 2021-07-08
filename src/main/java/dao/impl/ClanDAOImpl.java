@@ -41,14 +41,15 @@ public class ClanDAOImpl implements ClanDAO {
     }
 
     @Override
-    public boolean addMember(String clanName, String playerIdOrName) {
+    public boolean addMember(String clanName, String[] playerIdOrName) {
         Clan clan = findByName(clanName);
-        Player player = playerDAO.getPlayer(playerIdOrName);
+        Player player = playerDAO.getPlayer(playerDAO.buildStringFromArgs(playerIdOrName));
 
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {
                     Clan mergedClan = em.merge(clan);
                     Player mergedPlayer = em.merge(player);
+                    mergedPlayer.setClanLeader(false);
 
                     int oldSize = mergedClan.getMembers().size();
                     mergedClan.addMember(mergedPlayer);
@@ -59,14 +60,15 @@ public class ClanDAOImpl implements ClanDAO {
     }
 
     @Override
-    public boolean deleteMember(String clanName, String playerIdOrName) {
+    public boolean deleteMember(String clanName, long id) {
         Clan clan = findByName(clanName);
-        Player player = playerDAO.getPlayer(playerIdOrName);
+        Player player = playerDAO.getPlayer(Long.toString(id));
 
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {
                     Clan mergedClan = em.merge(clan);
                     Player mergedPlayer = em.merge(player);
+                    mergedPlayer.setClanLeader(false);
 
                     int oldSize = mergedClan.getMembers().size();
                     mergedClan.deleteMember(mergedPlayer);
@@ -90,7 +92,7 @@ public class ClanDAOImpl implements ClanDAO {
     }
 
     @Override
-    public boolean changeClanLeader(String clanName, String oldLeaderIdOrName, String newLeaderIdOrName) {
+    public boolean changeClanLeader(String clanName, long oldId, long newId) {
         Clan clan = findByName(clanName);
 
         return JpaUtil.performReturningWithinPersistenceContext(
@@ -98,13 +100,13 @@ public class ClanDAOImpl implements ClanDAO {
                     Clan mergedClan = em.merge(clan);
 
                     mergedClan.getMembers().stream()
-                            .filter(Player::isClanLeader)
+                            .filter(player -> player.isClanLeader() && player.getId() == oldId)
                             .findFirst()
                             .orElseThrow(() -> new NoSuchElementException("Лидер клана не найден в списке мемберов."))
                             .setClanLeader(false);
 
                     mergedClan.getMembers().stream()
-                            .filter(player -> player.getTempName().equals(newLeaderIdOrName) || player.getId() == Long.parseLong(newLeaderIdOrName))
+                            .filter(player -> player.getId() == newId)
                             .findFirst()
                             .orElseThrow(() -> new NoSuchElementException("Кандидат в лидера клана не найден в списке мемберов."))
                             .setClanLeader(true);
