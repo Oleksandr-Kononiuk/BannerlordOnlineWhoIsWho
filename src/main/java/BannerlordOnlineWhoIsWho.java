@@ -63,7 +63,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (checkChanel(event) && checkPermissions(event)) {
-            System.out.println("Chanel name: " + event.getChannel().getName());
+            //System.out.println("Chanel name: " + event.getChannel().getName());
 
             String command = event.getMessage().getContentRaw();
             System.out.println("Text: " + command);
@@ -72,12 +72,12 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
             event.getChannel().sendMessage(result).queue();
         } else {
-            System.out.println("Wrong chanel or user don`t have permissions!");
+            //System.out.println("Wrong chanel or user don`t have permissions!");
         }
     }
 
     private boolean checkChanel(MessageReceivedEvent event) {
-        System.out.println("Chanel name: " + event.getChannel().getName());
+        //System.out.println("Chanel name: " + event.getChannel().getName());
 
         return event.getChannel().getName().equals("commands") || event.getChannel().getName().equals("feedback");
     }
@@ -85,10 +85,10 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private boolean checkPermissions(MessageReceivedEvent event) {
         List<Role> userRoles = event.getMember().getRoles();
 
-        for (Role role : userRoles) {
-            System.out.println("User role: " + role.getName());
-            System.out.println("User role position: " + role.getPosition());
-        }
+//        for (Role role : userRoles) {
+//            System.out.println("User role: " + role.getName());
+//            //System.out.println("User role position: " + role.getPosition());
+//        }
         for (Role role : event.getMember().getRoles()) {
             for (int perm : ACCESS_ROLE_POSITION) {
                 if (role.getPosition() == perm) return true;
@@ -115,28 +115,28 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 }
             case "find"://+
                 try {
-                    Player p = playerDAO.find(args[0]);
+                    Player p = playerDAO.find(args);
                     return view.toStringPlayer(p);
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
             case "clan"://+
                 try {
-                    Clan clan = playerDAO.getPlayerClan(args[0]);
+                    Clan clan = playerDAO.getPlayerClan(args);
                     return (clan == null ? "> Игрок не состоит в клане." : view.toStringClan(clan));
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
             case "leader"://+
                 try {
-                    boolean isLeader = playerDAO.isClanLeader(args[0]);
+                    boolean isLeader = playerDAO.isClanLeader(args);
                     return String.format("> Игрок%s лидер клана.", (isLeader ? "" : " не"));
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
-            case "twink":
+            case "twink"://+
                 try {
-                    boolean isTwink = playerDAO.isTwink(args[0]);
+                    boolean isTwink = playerDAO.isTwink(args);
                     return String.format("> Аккаунт%s твинк.", (isTwink ? "" : " не"));
                 } catch (Exception e) {
                     return playerNotFoundString(e);
@@ -161,35 +161,35 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 }
             case "change_name"://+
                 try {
-                    boolean isChanged = playerDAO.changeTempName(args[0], args);
+                    boolean isChanged = playerDAO.changeTempName(Long.parseLong(args[0]), args);
                     return String.format("> Имя игрока%s изменено.", (!isChanged ? "" : " не"));
+                } catch (NumberFormatException n) {
+                    return "> Id игрока не указан.";
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
             case "change_clan"://+
                 try {
-                    boolean isChanged = playerDAO.changeClan(args[0], args[1]);
+                    boolean isChanged = playerDAO.changeClan(Long.parseLong(args[0]), args[1]);
                     return String.format("> Клан игрока%s изменен.", (!isChanged ? "" : " не"));
+                } catch (IllegalStateException n) {
+                    return "> Игрок уже в клане.";
+                } catch (NumberFormatException n) {
+                    return "> Id игрока не указан.";
                 } catch (Exception e) {
-                    e.printStackTrace();
                     return playerNotFoundString(e);
                 }
-            case "set_leader"://+-     //todo перевірку чи в клані //todo добавити арсинг args[1], бо в parseBoolean "true".equalsIgnoreCase(s)
+            case "set_leader"://+
                 try {
-                    boolean isChanged = playerDAO.setClanLeader(args[0], Boolean.parseBoolean(args[1]));
+                    boolean isChanged = playerDAO.setClanLeader(Boolean.parseBoolean(args[0]), args);
                     return String.format("> Статус лидера%s изменен.", (!isChanged ? "" : " не"));
-                } catch (IndexOutOfBoundsException e) {
-                    return "> Значение статуса не указано. true - если лидер, false - если нет.";
-                }catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
-            case "set_twink"://+-
+            case "set_twink"://+
                 try {
-                    boolean isChanged = playerDAO.setTwink(args[0], Boolean.parseBoolean(args[1]));
+                    boolean isChanged = playerDAO.setTwink(Boolean.parseBoolean(args[0]), args);
                     return String.format("> Статус твинка%s изменен.", (!isChanged ? "" : " не"));
-                } catch (IndexOutOfBoundsException e) {
-                    return "> Значение статуса не указано. True - если твинк, false - если нет.";
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
@@ -200,7 +200,6 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 } catch (IllegalArgumentException i) {
                     return "> Id отрицательный или не цифра.";
                 } catch (Exception e) {
-                    e.printStackTrace();
                     return playerNotFoundString(e);
                 }
             default:
@@ -212,14 +211,14 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
     private String clanCommands(String command, String[] args) {
         switch (command.toLowerCase()) {
-            case "new":
+            case "new"://+
                 try {
                     clanDAO.addNewClan(args[0]);
                     return "> Клан добавлен.";
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }
-            case "delete":
+            case "delete": //+- //todo добавити видалення статусу  всіх кланлідерів
                 try {
                     boolean isDeleted = clanDAO.deleteClan(args[0]);
                     return String.format("> Клан%s удален.", (isDeleted ? "" : " не"));
@@ -332,7 +331,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
     private String playerNotFoundString(Exception e) {
         return String.format("> Игрок не найден. " +
-                "Причина: %s", e.getMessage());
+                "Причина: %s %s", e.getClass().getName(), e.getMessage());
     }
 
     private String getCommand() {

@@ -49,7 +49,7 @@ public class JpaUtil {
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             System.out.println("Error performing JPA operation. Transaction is rolled back");
-            //e.printStackTrace();
+            e.printStackTrace();
             throw e;
         } finally {
             entityManager.close();

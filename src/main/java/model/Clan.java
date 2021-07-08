@@ -20,6 +20,9 @@ public class Clan{
     @OneToMany(mappedBy = "clan", orphanRemoval = false, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<Player> members = new ArrayList<>();
 
+    //todo добавити поле "друг". Воно цифрове.
+    // Від значення цифри можна визначати дружній клан чи ні. І на основі цього створити карту дипломатії для свого клану
+
     public Clan() {
     }
 

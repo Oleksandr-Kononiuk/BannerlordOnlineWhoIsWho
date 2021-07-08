@@ -29,7 +29,9 @@ public class ClanDAOImpl implements ClanDAO {
                 em -> {
                     Clan merged = em.merge(toDeleteClan);
                     for(Player p : merged.getMembers()) {
-                       p.setClan(null);
+                        Player mergedPlayer = em.merge(p);
+                        mergedPlayer.setClan(null);
+                        mergedPlayer.setClanLeader(false);
                     }
                     //merged.setMembers(new ArrayList<>());
                     em.remove(merged);

@@ -6,6 +6,7 @@ import model.Player;
 import utils.DataUtils;
 import utils.JpaUtil;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,32 +31,30 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public Player find(String playerIdOrName) {
-        return getPlayer(playerIdOrName);
+    public Player find(String[] playerIdOrName) {
+        String s = buildStringFromArgs(playerIdOrName);
+        return getPlayer(s);
     }
 
     @Override
-    public Clan getPlayerClan(String playerIdOrName) {
-        Player player = getPlayer(playerIdOrName);
+    public Clan getPlayerClan(String[] playerIdOrName) {
+        String s = buildStringFromArgs(playerIdOrName);
+        Player player = getPlayer(s);
         return player.getClan();
     }
 
     @Override
-    public boolean isClanLeader(String playerIdOrName) {
-        if (isId(playerIdOrName)) {
-            return findById(Long.parseLong(playerIdOrName)).isClanLeader();
-        } else {
-            return findByTempName(playerIdOrName).isClanLeader();
-        }
+    public boolean isClanLeader(String[] playerIdOrName) {
+        String s = buildStringFromArgs(playerIdOrName);
+        Player player = getPlayer(s);
+        return player.isClanLeader();
     }
 
     @Override
-    public boolean isTwink(String playerIdOrName) {
-        if (isId(playerIdOrName)) {
-            return findById(Long.parseLong(playerIdOrName)).isTwink();
-        } else {
-            return findByTempName(playerIdOrName).isTwink();
-        }
+    public boolean isTwink(String[] playerIdOrName) {
+        String s = buildStringFromArgs(playerIdOrName);
+        Player player = getPlayer(s);
+        return player.isTwink();
     }
 
     @Override
@@ -77,10 +76,10 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public boolean changeTempName(String playerOldTempNameOrId, String[] newNameArray) {
-        Player player = getPlayer(playerOldTempNameOrId);//todo робить якийсь дивний зайвий селект
+    public boolean changeTempName(Long playerId, String[] newNameArray) {
+        Player player = findById(playerId);//todo робить якийсь дивний зайвий селект
         String oldName = player.getTempName();
-        String newName = buildStringFromArgs(newNameArray);
+        String newName = buildStringFromArgs(Arrays.copyOfRange(newNameArray, 1, newNameArray.length));
         player.setTempName(newName);
         update(player);
 
@@ -88,9 +87,9 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public boolean changeClan(String playerIdOrName, String newClanName) {
-        Player player = getPlayer(playerIdOrName);
-        String oldClanName = (player.getClan() == null ? "": player.getClan().getClanName());
+    public boolean changeClan(Long playerId, String newClanName) {
+        Player player = findById(playerId);
+        String oldClanName = (player.getClan() == null ? "" : player.getClan().getClanName());
         //System.out.println(oldClanName);
         Clan newClan = JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select c from Clan c where c.clan_name = :clanName", Clan.class)
@@ -98,24 +97,30 @@ public class PlayerDAOImpl implements PlayerDAO {
                         .getSingleResult()
         );
         player.setClan(newClan);
+        player.setClanLeader(false);
         update(player);
 
         return oldClanName.equals(player.getClan().getClanName());
     }
 
     @Override
-    public boolean setClanLeader(String playerIdOrName, boolean status) {
-        Player player = getPlayer(playerIdOrName);
-        boolean oldStatus = player.isClanLeader();
-        player.setClanLeader(status);
-        Player updatedPlayer = update(player);
+    public boolean setClanLeader(boolean status, String[] newNameArray) {
+        String s = buildStringFromArgs(Arrays.copyOfRange(newNameArray, 1, newNameArray.length));
+        Player player = getPlayer(s);
+        if (player.getClan() != null) {
+            boolean oldStatus = player.isClanLeader();
+            player.setClanLeader(status);
+            Player updatedPlayer = update(player);
 
-        return oldStatus == updatedPlayer.isClanLeader();//true не змінилось
+            return oldStatus == updatedPlayer.isClanLeader();//true не змінилось
+        } else
+            return true;
     }
 
     @Override
-    public boolean setTwink(String playerIdOrName, boolean status) {
-        Player player = getPlayer(playerIdOrName);
+    public boolean setTwink(boolean status, String[] newNameArray) {
+        String s = buildStringFromArgs(Arrays.copyOfRange(newNameArray, 1, newNameArray.length));
+        Player player = getPlayer(s);
         boolean oldStatus = player.isTwink();
         player.setTwink(status);
         Player updatedPlayer = update(player);
@@ -144,12 +149,12 @@ public class PlayerDAOImpl implements PlayerDAO {
 
     private String buildStringFromArgs(String[] array) {
         String result = "";
-        if (array.length == 2) return array[1];
 
-        for (int i = 1; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++) {
             result = result.concat(array[i]);
             result = result.concat(" ");
         }
+        System.out.println("buildStringFromArgs " + result);
         return result.trim();
     }
 
@@ -189,7 +194,7 @@ public class PlayerDAOImpl implements PlayerDAO {
                             .getSingleResult()
             );
         } catch (Exception e) {
-            System.out.println("11");
+            //e.printStackTrace();
         }
         return player;
     }

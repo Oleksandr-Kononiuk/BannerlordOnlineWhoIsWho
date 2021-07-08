@@ -34,6 +34,8 @@ public class Player {
     public Player() {
     }
 
+    //todo добавити поле "друг" яке буде синхронізуватись з кланом
+
 //    public void deleteFromClan() {
 //        this.getClan().getMembers().remove(this);
 //        this.setClan(null);

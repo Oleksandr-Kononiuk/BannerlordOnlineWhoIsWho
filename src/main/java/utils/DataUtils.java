@@ -26,7 +26,7 @@ public class DataUtils {
         return players;
     }
 
-    public Player getNewPlayer(long id) { // todo імена з двох слів додає неправильно. Запамятовує тільки перше слово
+    public Player getNewPlayer(long id) {
         Player player = null;
 
         Document doc = getDocument(PROFILE_LINK + id);
@@ -65,9 +65,9 @@ public class DataUtils {
             if (elements.size() != 0) {
                 //System.out.println(elements.size());
                 String tagText = elements.get(0).text();
-                String name = tagText.split(" ")[0];
+                String name = tagText.split("\\|")[0].trim();
 //                System.out.println(tagText);
-//                System.out.println(name);
+                System.out.println(name);
                 return name;
             }
         } else {
