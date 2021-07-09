@@ -28,12 +28,13 @@ public class ClanDAOImpl implements ClanDAO {
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {
                     Clan merged = em.merge(toDeleteClan);
-                    for(Player p : merged.getMembers()) {
-                        Player mergedPlayer = em.merge(p);
-                        mergedPlayer.setClan(null);
-                        mergedPlayer.setClanLeader(false);
-                    }
-                    //merged.setMembers(new ArrayList<>());
+                    merged.getMembers().forEach(
+                            member -> {
+                                member.setClanLeader(false);
+                                member.setClan(null);
+                            }
+                    );
+                    merged.setMembers(new ArrayList<>());
                     em.remove(merged);
                     return true;
                 }
@@ -117,9 +118,9 @@ public class ClanDAOImpl implements ClanDAO {
 
     @Override
     public List<Clan> getAllClans(String filter) {
-        List<Clan> allClans =  JpaUtil.performReturningWithinPersistenceContext(
+        List<Clan> allClans = JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select c from Clan c", Clan.class)
-                .getResultList()
+                        .getResultList()
         );
         if (filter.matches("\\d{1,}")) {        //return N first clans
             return allClans.stream()
@@ -136,8 +137,8 @@ public class ClanDAOImpl implements ClanDAO {
     public Clan findByName(String clanName) {
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select c from Clan c where c.clan_name = :clanName", Clan.class)
-                .setParameter("clanName", clanName)
-                .getSingleResult()
+                        .setParameter("clanName", clanName)
+                        .getSingleResult()
         );
     }
 }

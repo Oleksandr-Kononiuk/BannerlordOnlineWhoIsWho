@@ -120,19 +120,20 @@ public class Player {
     public String toString() {
         return  "```css\n" +
                 "id: '" + id + "'" +
-                ", Основной ник '" + main_name + "'" +
                 ", Актуальный ник '" + temp_name + "'" +
                 ", Клан '" + (clan != null ? clan.getClanName() : "отсуствует") + "'" +
                 ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
                 ", Твинк '" + (is_twink ? "Да" : "Нет") + "'\n" +
-                "Ссылка на профиль '" + profile_link + "'\n" +
+                ", Основной ник '" + main_name + "'" +
+                ", Ссылка на профиль '" + profile_link + "'\n" +
                 "```";
     }
 
-    public String toClanMemberString() {//todo id
-        return  "Основной ник '" + main_name + "'" +
+    public String toClanMemberString() {
+        return  "id '" + id + "'" +
                 ", Актуальный ник '" + temp_name + "'" +
                 ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
-                ", Твинк '" + (is_twink ? "Да" : "Нет") + "'";
+                ", Твинк '" + (is_twink ? "Да" : "Нет") + "'" +
+                ", Основной ник '" + main_name + "'";
     }
 }

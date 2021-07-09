@@ -218,7 +218,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }
-            case "delete": //+- //todo добавити видалення статусу всіх кланлідерів
+            case "delete": //+
                 try {
                     boolean isDeleted = clanDAO.deleteClan(args[0]);
                     return String.format("> Клан%s удален.", (isDeleted ? "" : " не"));
