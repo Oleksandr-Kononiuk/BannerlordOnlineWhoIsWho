@@ -14,8 +14,8 @@ public class View {
     public String toStringClan(Clan c) {
         StringBuilder out = new StringBuilder(
                 String.format("```css\n" +
-                        "Clan name [%s]. Clan size [%d]\n" +
-                        "Members:\n", c.getClanName(), c.getMembers().size()));
+                        "Название клана [%s]. Количество игроков [%d]\n" +
+                        "Состав:\n", c.getClanName(), c.getMembers().size()));
 
         if (c.getMembers().size() > 0) {
             for (Player p : c.getMembers()) {
@@ -25,10 +25,4 @@ public class View {
         out.append("```");
         return out.toString();
     }
-//    ```css
-//    Clan name [%s] Clan size [%d]
-//    Members:
-//    {asdasda: 'sdsd'}
-//    Игрок{asdasda}
-//```
 }

@@ -106,7 +106,7 @@ public class DataUtils {
                     .get();
         } catch (IOException e) {
             System.out.println(e.getMessage());
-            System.out.println("getDocument(String source) возвращает NULL");
+            System.out.println(String.format("getDocument(String %s) return NULL", source));
             //e.printStackTrace();
             //logger.error(Arrays.toString(e.getStackTrace()));
         }

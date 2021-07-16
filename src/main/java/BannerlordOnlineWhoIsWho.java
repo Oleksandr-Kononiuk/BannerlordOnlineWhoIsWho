@@ -85,10 +85,10 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private boolean checkPermissions(MessageReceivedEvent event) {
         List<Role> userRoles = event.getMember().getRoles();
 
-//        for (Role role : userRoles) {
-//            System.out.println("User role: " + role.getName());
-//            //System.out.println("User role position: " + role.getPosition());
-//        }
+        for (Role role : userRoles) {
+            System.out.println("User role: " + role.getName());
+            System.out.println("User role position: " + role.getPosition());
+        }
         for (Role role : event.getMember().getRoles()) {
             for (int perm : ACCESS_ROLE_POSITION) {
                 if (role.getPosition() == perm) return true;
@@ -306,7 +306,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
         if (validateCommand(words)) {
             String[] args = Arrays.copyOfRange(words, 2, words.length);
-            System.out.println("Входные аргументы: " + Arrays.toString(args));
+            System.out.println("Input arguments: " + Arrays.toString(args));
 
             switch (words[0].toLowerCase()) {
                 case "!player":
