@@ -83,10 +83,13 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     }
 
     private boolean checkPermissions(MessageReceivedEvent event) {
+        if (event.getMember().getUser().isBot()) return false;
+
         List<Role> userRoles = event.getMember().getRoles();
         for (Role role : event.getMember().getRoles()) {
+            System.out.println("User role: " + role.getName());
+
             for (String perm : ACCESS_ROLE_POSITION) {
-                System.out.println("User role: " + role.getName());
                 if (role.getName().equalsIgnoreCase(perm)) return true;
             }
         }
