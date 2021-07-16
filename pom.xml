@@ -64,22 +64,6 @@
             <version>5.4.10.Final</version>
         </dependency>
 
-        <!-- Hibernate -->
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.4.10.Final</version>
-        </dependency>
-
-        <!-- Hibernate -->
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>5.4.1.Final</version>
-        </dependency>
-
         <!-- Connector/J -->
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
@@ -87,14 +71,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.21</version>
         </dependency>
-
-        <!--
-                <dependency>
-                    <groupId>org.postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                    <version>42.2.3</version>
-                </dependency>
-                -->
 
         <dependency>
             <groupId>net.dv8tion</groupId>
