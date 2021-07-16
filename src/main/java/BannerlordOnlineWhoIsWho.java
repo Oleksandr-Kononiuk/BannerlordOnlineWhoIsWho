@@ -32,7 +32,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private final View view = new View();
 
     private static final String BOT_TOKEN = "ODYxOTI0MjcwMDYxMjU2NzA0.YOQ3hw.h8tBbMsPKYog0pKr8aY-nypu4Os";
-    private static final int[] ACCESS_ROLE_POSITION = new int[]{9, 10, 11, 12, 13, 14};
+    private static final String[] ACCESS_ROLE_POSITION = new String[]{"Князь", "Бояре", "Рекрутёр", "Diplomat", "Великий Князь"};
     private static final String WRONG_FORMAT = "> Возможно неправильный формат команды. Попробуйте еще раз.";
 
     public static void main(String[] args) {
@@ -84,14 +84,10 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
     private boolean checkPermissions(MessageReceivedEvent event) {
         List<Role> userRoles = event.getMember().getRoles();
-
-        for (Role role : userRoles) {
-            System.out.println("User role: " + role.getName());
-            System.out.println("User role position: " + role.getPosition());
-        }
         for (Role role : event.getMember().getRoles()) {
-            for (int perm : ACCESS_ROLE_POSITION) {
-                if (role.getPosition() == perm) return true;
+            for (String perm : ACCESS_ROLE_POSITION) {
+                System.out.println("User role: " + role.getName());
+                if (role.getName().equalsIgnoreCase(perm)) return true;
             }
         }
         return false;
