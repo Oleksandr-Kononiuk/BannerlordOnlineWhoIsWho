@@ -141,4 +141,15 @@ public class ClanDAOImpl implements ClanDAO {
                         .getSingleResult()
         );
     }
+
+    @Override
+    public boolean setRelation(String clanName, int relation) {
+        Clan clan = findByName(clanName);
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> {
+                    Clan merged = em.merge(clan);
+                    merged.setRelation(relation);
+                    return true;
+        });
+    }
 }

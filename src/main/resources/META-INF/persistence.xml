@@ -6,13 +6,13 @@
         <class>model.Clan</class>
 
         <properties>
-            <property name="hibernate.connection.url" value="jdbc:mysql://eu02-sql.pebblehost.com:3306/customer_206026_bo?serverTimezone=UTC"/>
-<!--            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/bannerlordonline?serverTimezone=UTC"/>-->
+<!--            <property name="hibernate.connection.url" value="jdbc:mysql://eu02-sql.pebblehost.com:3306/customer_206026_bo?serverTimezone=UTC"/>-->
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/bannerlordonline?serverTimezone=UTC"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-            <property name="hibernate.connection.username" value="customer_206026_bo"/>
-            <property name="hibernate.connection.password" value="DJMsC7OxCNZukAgJ#Fzl"/>
-<!--            <property name="hibernate.connection.username" value="root"/>-->
-<!--            <property name="hibernate.connection.password" value="1111"/>-->
+<!--            <property name="hibernate.connection.username" value="customer_206026_bo"/>-->
+<!--            <property name="hibernate.connection.password" value="DJMsC7OxCNZukAgJ#Fzl"/>-->
+            <property name="hibernate.connection.username" value="root"/>
+            <property name="hibernate.connection.password" value="1111"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="true"/>

@@ -147,6 +147,21 @@ public class PlayerDAOImpl implements PlayerDAO {
         );
     }
 
+    @Override
+    public boolean update(Long playerId) {
+        Player updated = dataUtils.getNewPlayer(playerId);
+        Player player = getPlayer(playerId.toString());
+
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> {
+                    Player merged = em.merge(player);
+                    merged.setTempName(updated.getTempName());
+                    merged.setArmy(player.getArmy() == null ? 0 : player.getArmy());
+                    return true;
+                }
+        );
+    }
+
     public String buildStringFromArgs(String[] array) {
         String result = "";
 

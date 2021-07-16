@@ -22,6 +22,9 @@ public class Player {
     @JoinColumn(name = "clan_id")
     private Clan clan;
 
+    @Column(name = "army", nullable = false, columnDefinition = "int default 0")
+    private Integer army = 0;
+
     @Column(name = "is_clan_leader")
     private boolean is_clan_leader = false;
 
@@ -102,6 +105,14 @@ public class Player {
         this.profile_link = profileLink;
     }
 
+    public Integer getArmy() {
+        return army;
+    }
+
+    public void setArmy(int army) {
+        this.army = army;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -123,6 +134,7 @@ public class Player {
                 ", Актуальный ник '" + temp_name + "'" +
                 ", Клан '" + (clan != null ? clan.getClanName() : "отсуствует") + "'" +
                 ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
+                ", Размер отряда '" + army + "'" +
                 ", Твинк '" + (is_twink ? "Да" : "Нет") + "'\n" +
                 ", Основной ник '" + main_name + "'" +
                 ", Ссылка на профиль '" + profile_link + "'\n" +
@@ -133,6 +145,7 @@ public class Player {
         return  "id '" + id + "'" +
                 ", Актуальный ник '" + temp_name + "'" +
                 ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
+                ", Размер отряда '" + army + "'" +
                 ", Твинк '" + (is_twink ? "Да" : "Нет") + "'" +
                 ", Основной ник '" + main_name + "'";
     }

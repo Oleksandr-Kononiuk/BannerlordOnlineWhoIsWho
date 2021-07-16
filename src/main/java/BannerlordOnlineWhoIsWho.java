@@ -201,6 +201,15 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
+            case "update"://+
+                try {
+                    boolean isUpdated = playerDAO.update(Long.parseLong(args[0]));
+                    return String.format("> Игрок%s обновлен.", (isUpdated ? "" : " не"));
+                } catch (IllegalArgumentException i) {
+                    return "> Id отрицательный или не цифра.";
+                } catch (Exception e) {
+                    return playerNotFoundString(e);
+                }
             default:
                 System.out.println("Maybe wrong command format. Please try again.");
                 return WRONG_FORMAT;

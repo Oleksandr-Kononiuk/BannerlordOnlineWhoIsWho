@@ -14,4 +14,5 @@ public interface ClanDAO {
     boolean changeClanLeader(String clanName, long oldId, long newId);
     List<Clan> getAllClans(String filter);
     Clan findByName(String clanName);
+    boolean setRelation(String clanName, int relation);
 }
