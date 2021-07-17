@@ -178,6 +178,17 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 } catch (Exception e) {
                     return playerNotFoundString(e);
                 }
+            case "army":
+                try {
+                    boolean isChanged = playerDAO.setArmy(Integer.parseInt(args[0]), args);
+                    return String.format("> Количество войск%s обновлено.", (isChanged ? "" : " не"));
+                } catch (NumberFormatException n) {
+                    return "> Первый параметр должен быть числом!";
+                } catch (IllegalArgumentException i) {
+                    return "> Размер армии не может быть отрицательным!";
+                } catch (Exception e) {
+                    return playerNotFoundString(e);
+                }
             case "set_leader"://+
                 try {
                     boolean isChanged = playerDAO.setClanLeader(Boolean.parseBoolean(args[0]), args);

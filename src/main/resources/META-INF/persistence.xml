@@ -13,6 +13,9 @@
 <!--            <property name="hibernate.connection.password" value="DJMsC7OxCNZukAgJ#Fzl"/>-->
             <property name="hibernate.connection.username" value="root"/>
             <property name="hibernate.connection.password" value="1111"/>
+            <property name="connection.autoReconnect" value="true"/>
+            <property name="connection.autoReconnectForPools" value="true"/>
+            <property name="connection.is-connection-validation-required" value="true"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="true"/>

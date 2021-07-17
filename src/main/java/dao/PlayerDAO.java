@@ -17,6 +17,7 @@ public interface PlayerDAO {
     List<Player> findAll(String filter);
     boolean changeTempName(Long playerId, String[] newName);
     boolean changeClan(Long playerId, String newClan);
+    boolean setArmy(int army, String[] playerIdOrName);
     boolean delete(Long playerId);
     boolean update(Long playerId);
 }

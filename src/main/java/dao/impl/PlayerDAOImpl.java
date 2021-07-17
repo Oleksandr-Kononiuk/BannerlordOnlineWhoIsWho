@@ -104,6 +104,22 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
+    public boolean setArmy(int army, String[] playerIdOrName) {
+        if (army < 0) throw new IllegalArgumentException();
+
+        String s = buildStringFromArgs(Arrays.copyOfRange(playerIdOrName, 1, playerIdOrName.length));
+        Player player = getPlayer(s);
+
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> {
+                    Player merged = em.merge(player);
+                    merged.setArmy(army);
+                    return true;
+                }
+        );
+    }
+
+    @Override
     public boolean setClanLeader(boolean status, String[] newNameArray) {
         String s = buildStringFromArgs(Arrays.copyOfRange(newNameArray, 1, newNameArray.length));
         Player player = getPlayer(s);
