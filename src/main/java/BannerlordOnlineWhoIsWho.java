@@ -63,6 +63,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (checkMe(event) && event.getMessage().getContentRaw().startsWith("fill_db")) {
+                System.out.println("Morgan_Black(Саня)#2160 authorized." );
                 String[] words = event.getMessage().getContentRaw().split(" ");
                 System.out.println("Fill DB from player ID:" + words[1] + " to:" + words[2]);
                 fillDB(Integer.parseInt(words[1]), Integer.parseInt(words[2]));
@@ -106,8 +107,6 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 //        System.out.println(event.getMember().getUser().getName());
         if (event.getMember().getUser().getAsTag().equals("Morgan_Black(Саня)#2160")
                 && event.getMember().getUser().getName().equals("Morgan_Black(Саня)")) {
-
-            System.out.println("Morgan_Black(Саня)#2160 authorized." );
             return true;
         }
         return false;
