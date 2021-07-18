@@ -62,12 +62,10 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (checkMe(event)) {
-            if (event.getMessage().getContentRaw().startsWith("fill_db")) {
+        if (checkMe(event) && event.getMessage().getContentRaw().startsWith("fill_db")) {
                 String[] words = event.getMessage().getContentRaw().split(" ");
                 System.out.println("Fill DB from player ID:" + words[1] + " to:" + words[2]);
                 fillDB(Integer.parseInt(words[1]), Integer.parseInt(words[2]));
-            }
         } else
         if (checkChanel(event) && checkPermissions(event)) {
             //System.out.println("Chanel name: " + event.getChannel().getName());

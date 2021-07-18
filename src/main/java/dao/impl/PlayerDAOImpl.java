@@ -59,25 +59,25 @@ public class PlayerDAOImpl implements PlayerDAO {
 
     @Override
     public List<Player> findAll(String filter) {
-        List<Player> allPlayers = JpaUtil.performReturningWithinPersistenceContext(
-                em -> em.createQuery("select p from Player p", Player.class)
-                        .getResultList()
-        );
-
-        if (filter.matches("\\d{1,}")) {        //return N first players
-            return allPlayers.stream()
-                    .limit(Long.parseLong(filter))
-                    .collect(Collectors.toList());
-        } else {
-            return allPlayers.stream()              //return all players which name starts on filter
-                    .filter(player -> player.getTempName().startsWith(filter))
-                    .collect(Collectors.toList());
+        if (filter.matches("\\d{1,}")) {            //return N first players
+            return JpaUtil.performReturningWithinPersistenceContext(
+                    em -> em.createQuery("select p from Player p", Player.class)
+                            .setMaxResults(Integer.parseInt(filter))
+                            .getResultList()
+            );
+        } else {                                            //return all players which name starts on filter
+            String query = "select p from Player p where p.temp_name LIKE '" + filter + "%'";
+            return JpaUtil.performReturningWithinPersistenceContext(
+                    em -> em.createQuery(query, Player.class)
+                            .setMaxResults(9)
+                            .getResultList()
+            );
         }
     }
 
     @Override
     public boolean changeTempName(Long playerId, String[] newNameArray) {
-        Player player = findById(playerId);//todo робить якийсь дивний зайвий селект
+        Player player = findById(playerId);
         String oldName = player.getTempName();
         String newName = buildStringFromArgs(Arrays.copyOfRange(newNameArray, 1, newNameArray.length));
         player.setTempName(newName);
@@ -172,7 +172,6 @@ public class PlayerDAOImpl implements PlayerDAO {
                 em -> {
                     Player merged = em.merge(player);
                     merged.setTempName(updated.getTempName());
-                    merged.setArmy(player.getArmy() == null ? 0 : player.getArmy());
                     return true;
                 }
         );
