@@ -62,6 +62,13 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (checkMe(event)) {
+            if (event.getMessage().getContentRaw().contains("fill_db")) {
+                String[] words = event.getMessage().getContentRaw().split(" ");
+                System.out.println("Fill DB from player ID:" + words[1] + " to:" + words[2]);
+                fillDB(Integer.parseInt(words[1]), Integer.parseInt(words[2]));
+            }
+        } else
         if (checkChanel(event) && checkPermissions(event)) {
             //System.out.println("Chanel name: " + event.getChannel().getName());
 
@@ -94,6 +101,14 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
             }
         }
         return false;
+    }
+
+    private boolean checkMe(MessageReceivedEvent event) {
+//        System.out.println(event.getMember().getUser().getAsTag());
+//        System.out.println(event.getMember().getUser().getName());
+        System.out.println("Morgan_Black(Саня)#2160 authorized." );
+        return event.getMember().getUser().getAsTag().equals("Morgan_Black(Саня)#2160")
+                && event.getMember().getUser().getName().equals("Morgan_Black(Саня)");
     }
 
     private String playerCommands(String command, String[] args) {
@@ -377,9 +392,9 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private void fillDB(int from, int to) {
         for (int i = from; i < to; i++) {
             String s = "!player save " + i;
-            //parseCommand(s);
+            parseCommand(s);
             try {
-                Thread.sleep(5); //timeout
+                Thread.sleep(10); //timeout
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
