@@ -38,6 +38,7 @@ public class Player {
     }
 
     //todo добавити поле "друг" яке буде синхронізуватись з кланом
+    //todo add list of all known names of this player
 
 //    public void deleteFromClan() {
 //        this.getClan().getMembers().remove(this);
