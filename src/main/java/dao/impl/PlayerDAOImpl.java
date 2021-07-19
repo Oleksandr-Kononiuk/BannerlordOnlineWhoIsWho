@@ -146,7 +146,7 @@ public class PlayerDAOImpl implements PlayerDAO {
         return oldStatus == updatedPlayer.isTwink();//true не змінилось
     }
 
-    public Player update(Player player) {
+    private Player update(Player player) {
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.merge(player)
         );
@@ -167,10 +167,10 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public boolean update(Long playerId) {
         Player updated = dataUtils.getNewPlayer(playerId);
-        Player player = getPlayer(playerId.toString());
 
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {
+                    Player player = em.getReference(Player.class, playerId);
                     Player merged = em.merge(player);
                     merged.setTempName(updated.getTempName());
                     return true;
