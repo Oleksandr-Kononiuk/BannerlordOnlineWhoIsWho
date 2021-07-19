@@ -178,7 +178,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
             case "change_name"://+
                 try {
                     boolean isChanged = playerDAO.changeTempName(Long.parseLong(args[0]), args);
-                    return String.format("> Имя игрока%s изменено.", (!isChanged ? "" : " не"));
+                    return String.format("> Имя игрока%s изменено.", (isChanged ? "" : " не"));
                 } catch (NumberFormatException n) {
                     return "> Id игрока не указан.";
                 } catch (Exception e) {

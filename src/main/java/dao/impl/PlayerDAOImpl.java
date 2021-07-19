@@ -77,13 +77,16 @@ public class PlayerDAOImpl implements PlayerDAO {
 
     @Override
     public boolean changeTempName(Long playerId, String[] newNameArray) {
-        Player player = findById(playerId);
-        String oldName = player.getTempName();
         String newName = buildStringFromArgs(Arrays.copyOfRange(newNameArray, 1, newNameArray.length));
-        player.setTempName(newName);
-        update(player);
 
-        return oldName.equals(newName);
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> {
+                    Player reference = em.getReference(Player.class, playerId);
+                    reference.setTempName(newName);
+                    Player merged = em.merge(reference);
+                    return newName.equals(merged.getTempName());
+                }
+        );
     }
 
     @Override
