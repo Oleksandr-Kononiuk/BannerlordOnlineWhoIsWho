@@ -13,8 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import utils.DataUtils;
 import utils.JpaUtil;
 import utils.View;
-
-import javax.management.relation.Relation;
 import javax.persistence.NoResultException;
 import javax.persistence.RollbackException;
 import javax.security.auth.login.LoginException;
@@ -63,23 +61,30 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (checkMe(event) && event.getMessage().getContentRaw().startsWith("fill_db")) {
+        if (checkChanel(event) && checkPermissions(event)) {
+            if (checkMe(event) && event.getMessage().getContentRaw().startsWith("fill_db")) {
                 System.out.println("Morgan_Black(Саня)#2160 authorized." );
                 String[] words = event.getMessage().getContentRaw().split(" ");
                 System.out.println("Fill DB from player ID:" + words[1] + " to:" + words[2]);
                 fillDB(Integer.parseInt(words[1]), Integer.parseInt(words[2]));
-        } else
-        if (checkChanel(event) && checkPermissions(event)) {
-            //System.out.println("Chanel name: " + event.getChannel().getName());
+                event.getChannel().sendMessage("Building DB completed").queue();
+            } else
+            if (checkMe(event) && event.getMessage().getContentRaw().startsWith("update_db")){
+                System.out.println("Morgan_Black(Саня)#2160 authorized." );
+                String[] words = event.getMessage().getContentRaw().split(" ");
+                System.out.println("Update DB from player ID:" + words[1] + " to:" + words[2]);
+                updateDB(Integer.parseInt(words[1]), Integer.parseInt(words[2]));
+                event.getChannel().sendMessage("Update completed").queue();
+            } else {
+                //System.out.println("Chanel name: " + event.getChannel().getName());
 
-            String command = event.getMessage().getContentRaw();
-            System.out.println("Text: " + command);
+                String command = event.getMessage().getContentRaw();
+                System.out.println("Text: " + command);
 
-            String result = parseCommand(command);
+                String result = parseCommand(command);
 
-            event.getChannel().sendMessage(result).queue();
-        } else {
-            //System.out.println("Wrong chanel or user don`t have permissions!");
+                event.getChannel().sendMessage(result).queue();
+            }
         }
     }
 
@@ -403,8 +408,20 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
     private void fillDB(int from, int to) {
         for (int i = from; i < to; i++) {
-            String s = "!player save " + i;
-            parseCommand(s);
+            String command = "!player save " + i;
+            parseCommand(command);
+            try {
+                Thread.sleep(10); //timeout
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void updateDB(int from, int to) {
+        for (int i = from; i <= to; i++) {
+            String command = "!player update " + i;
+            parseCommand(command);
             try {
                 Thread.sleep(10); //timeout
             } catch (InterruptedException e) {
