@@ -93,7 +93,6 @@ public class PlayerDAOImpl implements PlayerDAO {
     public boolean changeClan(Long playerId, String newClanName) {
         Player player = findById(playerId);
         String oldClanName = (player.getClan() == null ? "" : player.getClan().getClanName());
-        //System.out.println(oldClanName);
         Clan newClan = JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select c from Clan c where c.clan_name = :clanName", Clan.class)
                         .setParameter("clanName", newClanName)
@@ -123,8 +122,8 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public boolean setClanLeader(boolean status, String[] newNameArray) {
-        String s = buildStringFromArgs(Arrays.copyOfRange(newNameArray, 1, newNameArray.length));
+    public boolean setClanLeader(boolean status, String[] nameArray) {
+        String s = buildStringFromArgs(Arrays.copyOfRange(nameArray, 1, nameArray.length));
         Player player = getPlayer(s);
         if (player.getClan() != null) {
             boolean oldStatus = player.isClanLeader();
@@ -137,8 +136,8 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public boolean setTwink(boolean status, String[] newNameArray) {
-        String s = buildStringFromArgs(Arrays.copyOfRange(newNameArray, 1, newNameArray.length));
+    public boolean setTwink(boolean status, String[] nameArray) {
+        String s = buildStringFromArgs(Arrays.copyOfRange(nameArray, 1, nameArray.length));
         Player player = getPlayer(s);
         boolean oldStatus = player.isTwink();
         player.setTwink(status);
@@ -155,11 +154,10 @@ public class PlayerDAOImpl implements PlayerDAO {
 
     @Override
     public boolean delete(Long playerId) {
-        Player playerToDelete = findById(playerId);
-
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {
-                    Player merged = em.merge(playerToDelete);
+                    Player ref = em.getReference(Player.class, playerId);
+                    Player merged = em.merge(ref);
                     em.remove(merged);
                     return true;
                 }
