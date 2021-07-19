@@ -144,6 +144,8 @@ public class ClanDAOImpl implements ClanDAO {
 
     @Override
     public boolean setRelation(String clanName, int relation) {
+        if (relation < 0 || relation > 2) throw new IllegalArgumentException();
+
         Clan clan = findByName(clanName);
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {

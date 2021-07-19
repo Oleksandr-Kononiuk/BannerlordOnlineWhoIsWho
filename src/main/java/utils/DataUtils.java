@@ -12,6 +12,7 @@ import java.util.List;
 
 public class DataUtils {
 
+    public static final String[] relationsState = new String[] {"Нейтралитет", "Война", "Дружные"};
     private static final String PROFILE_LINK = "https://bannerlord-online.com/forum/index.php?members/";
 
     public List<Player> bruteForcePlayers(int pageFrom, int pageTo) {

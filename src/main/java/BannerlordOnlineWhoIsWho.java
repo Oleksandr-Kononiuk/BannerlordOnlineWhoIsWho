@@ -14,6 +14,7 @@ import utils.DataUtils;
 import utils.JpaUtil;
 import utils.View;
 
+import javax.management.relation.Relation;
 import javax.persistence.NoResultException;
 import javax.persistence.RollbackException;
 import javax.security.auth.login.LoginException;
@@ -36,7 +37,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private static final String WRONG_FORMAT = "> Возможно неправильный формат команды. Попробуйте еще раз.";
 
     public static void main(String[] args) {
-        JpaUtil.init("BannerlordOnlinePlayersMySQL"); // initialize database
+        JpaUtil.init("BO_dev"); // initialize database
         BannerlordOnlineWhoIsWho BOWIW = new BannerlordOnlineWhoIsWho();
 
         try {
@@ -323,6 +324,16 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                     if (clan != null) {
                         return view.toStringClan(clan);
                     }
+                } catch (Exception e) {
+                    return clanNotFoundString(e);
+                }
+            case "relations"://+
+                try {
+                    boolean isChanged = clanDAO.setRelation(args[0], Integer.parseInt(args[1]));
+                    return String.format("> > Дипломатические отношения%s изменены.", (isChanged ? "" : " не"));
+                } catch (IllegalArgumentException i) {
+                    return "> Параметр дипломатических отношений указан неправильно. " +
+                            "Правильные параметры: 0 -> нейтралитет, 1 -> война, 2 -> дружные.";
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }

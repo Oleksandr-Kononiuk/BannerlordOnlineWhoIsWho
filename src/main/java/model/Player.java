@@ -1,5 +1,7 @@
 package model;
 
+import utils.DataUtils;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -134,8 +136,9 @@ public class Player {
                 "id: '" + id + "'" +
                 ", Актуальный ник '" + temp_name + "'" +
                 ", Клан '" + (clan != null ? clan.getClanName() : "отсуствует") + "'" +
-                ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
                 ", Размер отряда '" + army + "'" +
+                ", Отношения '" + (clan != null ? DataUtils.relationsState[clan.getRelation()] : "-") + "'" +
+                ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
                 ", Твинк '" + (is_twink ? "Да" : "Нет") + "'\n" +
                 ", Основной ник '" + main_name + "'" +
                 ", Ссылка на профиль '" + profile_link + "'\n" +

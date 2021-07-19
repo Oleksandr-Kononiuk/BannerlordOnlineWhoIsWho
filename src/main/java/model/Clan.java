@@ -21,7 +21,7 @@ public class Clan{
     private List<Player> members = new ArrayList<>();
 
     @Column(name = "relation", nullable = false, columnDefinition = "int default 0")
-    private Integer relation = 0;
+    private Integer relation = 0;           //["Нейтралитет", "Война", "Дружные"]
 
     //todo добавити поле "друг". Воно цифрове.
     // Від значення цифри можна визначати дружній клан чи ні. І на основі цього створити карту дипломатії для свого клану
