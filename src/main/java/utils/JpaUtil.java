@@ -7,6 +7,10 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ *@author  Taras Boychuk bobocode.com
+ */
+
 public class JpaUtil {
     private static EntityManagerFactory emf;
 

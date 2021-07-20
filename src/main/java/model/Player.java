@@ -3,7 +3,14 @@ package model;
 import utils.DataUtils;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+
+/**
+ *@author  Oleksandr Kononiuk
+ */
 
 @Entity
 @Table(name = "players")
@@ -36,10 +43,16 @@ public class Player {
     @Column(name = "profile_link", nullable = false)
     private String profile_link;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name="old_names",
+            joinColumns=@JoinColumn(name="id")
+    )
+    private List<String> oldNames = new ArrayList<>();
+
     public Player() {
     }
 
-    //todo добавити поле "друг" яке буде синхронізуватись з кланом
     //todo add list of all known names of this player: update and change name methods
 
 //    public void deleteFromClan() {
@@ -116,6 +129,14 @@ public class Player {
         this.army = army;
     }
 
+    public List<String> getOldNames() {
+        return oldNames;
+    }
+
+    public void setOldNames(List<String> oldNames) {
+        this.oldNames = oldNames;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -139,8 +160,9 @@ public class Player {
                 ", Размер отряда '" + army + "'" +
                 ", Отношения '" + (clan != null ? DataUtils.relationsState[clan.getRelation()] : "-") + "'" +
                 ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
-                ", Твинк '" + (is_twink ? "Да" : "Нет") + "'\n" +
+                ", Твинк '" + (is_twink ? "Да" : "Нет") + "'" +
                 ", Основной ник '" + main_name + "'" +
+                ", Известен как '" + Arrays.toString(oldNames.toArray()) + "'" +
                 ", Ссылка на профиль '" + profile_link + "'\n" +
                 "```";
     }

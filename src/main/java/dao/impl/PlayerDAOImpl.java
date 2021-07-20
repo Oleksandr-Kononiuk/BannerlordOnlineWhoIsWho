@@ -10,6 +10,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ *@author  Oleksandr Kononiuk
+ */
+
 public class PlayerDAOImpl implements PlayerDAO {
 
     private DataUtils dataUtils = new DataUtils();
@@ -19,10 +23,13 @@ public class PlayerDAOImpl implements PlayerDAO {
         if (id < 0) throw new IllegalArgumentException("Id не может быть отрицательным.");
 
         Player newPlayer = dataUtils.getNewPlayer(id);
+        newPlayer.getOldNames().add(newPlayer.getTempName());
 
         if (newPlayer != null) {
             JpaUtil.performWithinPersistenceContext(
-                    em -> em.persist(newPlayer)
+                    em -> {
+                        em.persist(newPlayer);
+                    }
             );
         } else {
             throw new NullPointerException("Метод getNewPlayer(id) вернул NULL");

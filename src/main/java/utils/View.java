@@ -5,6 +5,10 @@ import model.Player;
 
 import java.util.Objects;
 
+/**
+ *@author  Oleksandr Kononiuk
+ */
+
 public class View {
 
     public String toStringPlayer(Player p) {

@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+/**
+ *@author  Oleksandr Kononiuk
+ */
+
 public class ClanDAOImpl implements ClanDAO {
 
     private PlayerDAOImpl playerDAO = new PlayerDAOImpl();

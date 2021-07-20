@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ *@author  Oleksandr Kononiuk
+ */
+
 @Entity
 @Table(name = "clans")
 public class Clan{

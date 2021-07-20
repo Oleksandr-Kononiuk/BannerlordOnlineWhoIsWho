@@ -23,6 +23,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ *@author  Oleksandr Kononiuk
+ */
+
 public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
     private final DataUtils dataUtils = new DataUtils();

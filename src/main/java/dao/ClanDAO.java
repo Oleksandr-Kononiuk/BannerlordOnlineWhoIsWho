@@ -4,6 +4,10 @@ import model.Clan;
 
 import java.util.List;
 
+/**
+ *@author  Oleksandr Kononiuk
+ */
+
 public interface ClanDAO {
 
     void addNewClan(String clanName);

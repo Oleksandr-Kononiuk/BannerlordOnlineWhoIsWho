@@ -5,6 +5,10 @@ import model.Player;
 
 import java.util.List;
 
+/**
+ *@author  Oleksandr Kononiuk
+ */
+
 public interface PlayerDAO {
 
     boolean save(long id);
