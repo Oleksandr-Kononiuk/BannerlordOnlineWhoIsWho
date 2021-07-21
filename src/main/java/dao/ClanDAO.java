@@ -3,6 +3,7 @@ package dao;
 import model.Clan;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *@author  Oleksandr Kononiuk
@@ -19,4 +20,6 @@ public interface ClanDAO {
     List<Clan> getAllClans(String filter);
     Clan findByName(String clanName);
     boolean setRelation(String clanName, int relation);
+    Map<Integer, List<Clan>> buildDiplomacy();
+    //todo add method which builds diplomacy map
 }

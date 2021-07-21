@@ -53,8 +53,6 @@ public class Player {
     public Player() {
     }
 
-    //todo add list of all known names of this player: update and change name methods
-
 //    public void deleteFromClan() {
 //        this.getClan().getMembers().remove(this);
 //        this.setClan(null);

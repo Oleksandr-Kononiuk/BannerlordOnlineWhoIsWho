@@ -5,9 +5,7 @@ import model.Clan;
 import model.Player;
 import utils.JpaUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -126,7 +124,7 @@ public class ClanDAOImpl implements ClanDAO {
                 em -> em.createQuery("select c from Clan c", Clan.class)
                         .getResultList()
         );
-        if (filter.matches("\\d{1,}")) {        //return N first clans
+        if (filter.matches("\\d+")) {        //return N first clans
             return allClans.stream()
                     .limit(Long.parseLong(filter))
                     .collect(Collectors.toList());
@@ -157,5 +155,15 @@ public class ClanDAOImpl implements ClanDAO {
                     merged.setRelation(relation);
                     return true;
         });
+    }
+
+    @Override
+    public Map<Integer, List<Clan>> buildDiplomacy() {
+        List<Clan> clans = JpaUtil.performReturningWithinPersistenceContext(
+                em -> em.createQuery("select c from Clan c", Clan.class).getResultList()
+        );
+
+        return clans.stream()
+                .collect(Collectors.groupingBy(Clan::getRelation));
     }
 }

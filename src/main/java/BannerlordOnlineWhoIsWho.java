@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -84,6 +85,60 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
     private boolean checkMe(String tag) {
         return tag.equals("Morgan_Black(Саня)#2160");
+    }
+
+    private String parseCommand(Message command) {
+        //String command = getCommand();
+
+        String[] words = command.getContentRaw().split(" ");
+        //System.out.println(words.length);
+        //if (words[0].startsWith("!exit")) System.exit(0);;
+
+        if (validateCommand(words)) {
+            String[] args = Arrays.copyOfRange(words, 2, words.length);
+            System.out.println("Input arguments: " + Arrays.toString(args));
+
+            switch (words[0].toLowerCase()) {
+                case "!player":
+                    return playerCommands(words[1], args);
+                case "!clan":
+                    return clanCommands(words[1], args);
+                case "!update_db":
+                    if (checkMe(command.getMember().getUser().getAsTag())) {
+                        System.out.println("Morgan_Black(Саня)#2160 authorized." );
+                        System.out.println("Updating DB from player ID:" + words[1] + " to:" + words[2]);
+
+                        for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
+                            playerDAO.update(i);
+                            try {
+                                Thread.sleep(10); //timeout
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return String.format("> Database was updated for player ID`s %s - %s", words[1], words[2]);
+                    }
+                case "!fill_db":
+                    if (checkMe(command.getMember().getUser().getAsTag())) {
+                        System.out.println("Morgan_Black(Саня)#2160 authorized." );
+                        System.out.println("Filling DB from player ID:" + words[1] + " to:" + words[2]);
+
+                        for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
+                            playerDAO.save(i);
+                            try {
+                                Thread.sleep(10); //timeout
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return String.format("> Database was filled for player ID`s %s - %s", words[1], words[2]);
+                    }
+                default:
+                    return WRONG_FORMAT;
+            }
+        } else {
+            return WRONG_FORMAT;
+        }
     }
 
     private String playerCommands(String command, String[] args) {
@@ -309,63 +364,16 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }
+            case "diplomacy"://+
+                try {
+                    Map<Integer, List<Clan>> diplomacy = clanDAO.buildDiplomacy();
+                    return view.toDiplomacyString(diplomacy);
+                } catch (Exception e) {
+                    return clanNotFoundString(e);
+                }
             default:
                 System.out.println("Maybe wrong command format. Please try again.");
                 return WRONG_FORMAT;
-        }
-    }
-
-    private String parseCommand(Message command) {
-        //String command = getCommand();
-
-        String[] words = command.getContentRaw().split(" ");
-        //System.out.println(words.length);
-        //if (words[0].startsWith("!exit")) System.exit(0);;
-
-        if (validateCommand(words)) {
-            String[] args = Arrays.copyOfRange(words, 2, words.length);
-            System.out.println("Input arguments: " + Arrays.toString(args));
-
-            switch (words[0].toLowerCase()) {
-                case "!player":
-                    return playerCommands(words[1], args);
-                case "!clan":
-                    return clanCommands(words[1], args);
-                case "!update_db":
-                    if (checkMe(command.getMember().getUser().getAsTag())) {
-                        System.out.println("Morgan_Black(Саня)#2160 authorized." );
-                        System.out.println("Updating DB from player ID:" + words[1] + " to:" + words[2]);
-
-                        for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
-                            playerDAO.update(i);
-                            try {
-                                Thread.sleep(10); //timeout
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return String.format("> Database was updated for player ID`s %s - %s", words[1], words[2]);
-                    }
-                case "!fill_db":
-                    if (checkMe(command.getMember().getUser().getAsTag())) {
-                        System.out.println("Morgan_Black(Саня)#2160 authorized." );
-                        System.out.println("Filling DB from player ID:" + words[1] + " to:" + words[2]);
-
-                        for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
-                            playerDAO.save(i);
-                            try {
-                                Thread.sleep(10); //timeout
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return String.format("> Database was filled for player ID`s %s - %s", words[1], words[2]);
-                    }
-                default:
-                    return WRONG_FORMAT;
-            }
-        } else {
-            return WRONG_FORMAT;
         }
     }
 

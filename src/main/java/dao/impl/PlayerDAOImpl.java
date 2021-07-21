@@ -65,7 +65,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
     @Override
     public List<Player> findAll(String filter) {
-        if (filter.matches("\\d{1,}")) {            //return N first players
+        if (filter.matches("\\d+")) {            //return N first players
             return JpaUtil.performReturningWithinPersistenceContext(
                     em -> em.createQuery("select p from Player p", Player.class)
                             .setMaxResults(Integer.parseInt(filter))
@@ -241,7 +241,7 @@ public class PlayerDAOImpl implements PlayerDAO {
             );
         } catch (Exception e) {
             throw e;
-            //e.printStackTrace();//todo
+            //e.printStackTrace();
         }
         return player;
     }

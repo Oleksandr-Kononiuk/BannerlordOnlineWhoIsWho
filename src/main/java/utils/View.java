@@ -3,6 +3,9 @@ package utils;
 import model.Clan;
 import model.Player;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -31,6 +34,18 @@ public class View {
             }
         }
         out.append("```");
+        return out.toString();
+    }
+
+    public String toDiplomacyString(Map<Integer, List<Clan>> diplomacy) {
+        StringBuilder out = new StringBuilder();
+
+        for(Map.Entry<Integer, List<Clan>> entry : diplomacy.entrySet()) {
+            out.append(DataUtils.relationsState[entry.getKey()]);
+            out.append("\n");
+            out.append(Arrays.toString(entry.getValue().toArray()));
+            out.append("\n");
+        }
         return out.toString();
     }
 }
