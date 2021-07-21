@@ -5,10 +5,8 @@ import model.Clan;
 import model.Player;
 import utils.DataUtils;
 import utils.JpaUtil;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *@author  Oleksandr Kononiuk
@@ -196,8 +194,8 @@ public class PlayerDAOImpl implements PlayerDAO {
     public String buildStringFromArgs(String[] array) {
         String result = "";
 
-        for (int i = 0; i < array.length; i++) {
-            result = result.concat(array[i]);
+        for (String s : array) {
+            result = result.concat(s);
             result = result.concat(" ");
         }
         System.out.println("buildStringFromArgs " + result);
@@ -208,7 +206,7 @@ public class PlayerDAOImpl implements PlayerDAO {
         if (playerIdOrName.matches("\\D")) { //contain any non-digit character
             return false;
         }
-        return playerIdOrName.matches("\\d{1,}"); //is contain digit character with 1+ length
+        return playerIdOrName.matches("\\d+"); //is contain digit character with 1+ length
     }
 
     public Player getPlayer(String playerIdOrName) {
@@ -222,7 +220,7 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     private Player findById(long id) {
-        Player player = null;
+        Player player;
         player = JpaUtil.performReturningWithinPersistenceContext(
                 em -> em.createQuery("select p from Player p where p.id = :id", Player.class)
                         .setParameter("id", id)
@@ -232,17 +230,12 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     private Player findByTempName(String tempName) {
-        Player player = null;
-        try {
-            player = JpaUtil.performReturningWithinPersistenceContext(
-                    em -> em.createQuery("select p from Player p where p.temp_name = :tempName", Player.class)
-                            .setParameter("tempName", tempName)
-                            .getSingleResult()
-            );
-        } catch (Exception e) {
-            throw e;
-            //e.printStackTrace();
-        }
+        Player player;
+        player = JpaUtil.performReturningWithinPersistenceContext(
+                em -> em.createQuery("select p from Player p where p.temp_name = :tempName", Player.class)
+                        .setParameter("tempName", tempName)
+                        .getSingleResult()
+        );
         return player;
     }
 }

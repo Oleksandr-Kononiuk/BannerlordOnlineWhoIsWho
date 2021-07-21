@@ -4,7 +4,6 @@ import dao.ClanDAO;
 import model.Clan;
 import model.Player;
 import utils.JpaUtil;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

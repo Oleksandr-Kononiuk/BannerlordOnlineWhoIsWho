@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import utils.DataUtils;
 import utils.JpaUtil;
 import utils.View;
 import javax.persistence.NoResultException;
@@ -31,7 +30,6 @@ import java.util.NoSuchElementException;
 
 public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
-    private final DataUtils dataUtils = new DataUtils();
     private final PlayerDAO playerDAO = new PlayerDAOImpl();
     private final ClanDAO clanDAO = new ClanDAOImpl();
     private final View view = new View();
@@ -55,7 +53,6 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (checkChanel(event) && checkPermissions(event)) {
-            //System.out.println("Chanel name: " + event.getChannel().getName());
             Message command = event.getMessage();
             System.out.println("Text: " + command.getContentRaw());
             String result = parseCommand(command);
@@ -72,7 +69,6 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private boolean checkPermissions(MessageReceivedEvent event) {
         if (event.getMember().getUser().isBot()) return false;
 
-//        List<Role> userRoles = event.getMember().getRoles();
         for (Role role : event.getMember().getRoles()) {
             System.out.println("User role: " + role.getName());
 
@@ -88,11 +84,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     }
 
     private String parseCommand(Message command) {
-        //String command = getCommand();
-
         String[] words = command.getContentRaw().split(" ");
-        //System.out.println(words.length);
-        //if (words[0].startsWith("!exit")) System.exit(0);;
 
         if (validateCommand(words)) {
             String[] args = Arrays.copyOfRange(words, 2, words.length);
@@ -109,7 +101,11 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                         System.out.println("Updating DB from player ID:" + words[1] + " to:" + words[2]);
 
                         for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
-                            playerDAO.update(i);
+                            try {
+                                playerDAO.update(i);
+                            } catch (Exception n) {
+                                System.out.println(n.getMessage() + " " + i);
+                            }
                             try {
                                 Thread.sleep(10); //timeout
                             } catch (InterruptedException e) {
@@ -124,7 +120,11 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                         System.out.println("Filling DB from player ID:" + words[1] + " to:" + words[2]);
 
                         for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
-                            playerDAO.save(i);
+                            try {
+                                playerDAO.save(i);
+                            } catch (Exception n) {
+                                System.out.println(n.getMessage() + " " + i);
+                            }
                             try {
                                 Thread.sleep(10); //timeout
                             } catch (InterruptedException e) {
@@ -332,13 +332,9 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                     List<Clan> clans = clanDAO.getAllClans(args[0]);
                     if (clans.size() > 0) {
                         StringBuilder resultOut = new StringBuilder();
-                        //int count = 0;
                         for (Clan c : clans) {
-                            //if (count > 8) break; // first 9 result line
-
                             resultOut.append(view.toStringClan(c));
                             resultOut.append("\n");
-                            //count++;
                         }
                         return resultOut.toString();
                     }
@@ -405,7 +401,6 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             command = reader.readLine();
         } catch (IOException e) {
-            //logger.error(Arrays.toString(e.getStackTrace()));
             e.printStackTrace();
         }
         return command;

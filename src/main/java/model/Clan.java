@@ -21,7 +21,7 @@ public class Clan{
     private String clan_name;
 
     @Column(name = "members")
-    @OneToMany(mappedBy = "clan", orphanRemoval = false, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(mappedBy = "clan", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<Player> members = new ArrayList<>();
 
     @Column(name = "relation", nullable = false, columnDefinition = "int default 0")

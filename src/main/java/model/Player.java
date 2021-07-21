@@ -53,16 +53,6 @@ public class Player {
     public Player() {
     }
 
-//    public void deleteFromClan() {
-//        this.getClan().getMembers().remove(this);
-//        this.setClan(null);
-//    }
-//
-//    public void addToClan(Clan clan) {
-//        this.setClan(clan);
-//        this.getClan().getMembers().add(this);
-//    }
-
     public long getId() {
         return id;
     }

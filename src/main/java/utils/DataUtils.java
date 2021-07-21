@@ -6,8 +6,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *@author  Oleksandr Kononiuk
@@ -17,18 +15,6 @@ public class DataUtils {
 
     public static final String[] relationsState = new String[] {"Нейтралитет", "Война", "Дружные"};
     private static final String PROFILE_LINK = "https://bannerlord-online.com/forum/index.php?members/";
-
-    public List<Player> bruteForcePlayers(int pageFrom, int pageTo) {
-        List<Player> players = new ArrayList<>();
-
-        for (int i = pageFrom; i < pageTo; i++) {
-            Player newPlayer = getNewPlayer(i);
-            if (newPlayer != null) {
-                players.add(newPlayer);
-            }
-        }
-        return players;
-    }
 
     public Player getNewPlayer(long id) {
         Player player = null;
@@ -87,10 +73,7 @@ public class DataUtils {
             Elements elements = doc.getElementsByTag("meta");
 
             if (elements.size() != 0) {
-                //System.out.println(elements.size());
-                String link = elements.get(5).attr("content");
-                //System.out.println(link);
-                return link;
+                return elements.get(5).attr("content");
             }
         } else {
             System.out.println("doc is null");
