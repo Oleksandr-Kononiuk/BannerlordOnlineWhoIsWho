@@ -163,7 +163,7 @@ public class Player {
                 ", Твинк '" + (is_twink ? "Да" : "Нет") + "'" +
                 ", Основной ник '" + main_name + "'" +
                 ", Известен как '" + Arrays.toString(oldNames.toArray()) + "'" +
-                ", Ссылка на профиль '" + profile_link + "'\n" +
+                ", Ссылка на профиль '" + profile_link + "'" +
                 "```";
     }
 

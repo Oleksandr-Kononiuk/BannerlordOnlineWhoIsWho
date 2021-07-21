@@ -23,18 +23,17 @@ public class PlayerDAOImpl implements PlayerDAO {
         if (id < 0) throw new IllegalArgumentException("Id не может быть отрицательным.");
 
         Player newPlayer = dataUtils.getNewPlayer(id);
-        newPlayer.getOldNames().add(newPlayer.getTempName());
 
         if (newPlayer != null) {
-            JpaUtil.performWithinPersistenceContext(
+            return JpaUtil.performReturningWithinPersistenceContext(
                     em -> {
                         em.persist(newPlayer);
+                        return true;
                     }
             );
         } else {
             throw new NullPointerException("Метод getNewPlayer(id) вернул NULL");
         }
-        return true;
     }
 
     @Override
@@ -85,12 +84,16 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public boolean changeTempName(Long playerId, String[] newNameArray) {
         String newName = buildStringFromArgs(Arrays.copyOfRange(newNameArray, 1, newNameArray.length));
+        Player old = findById(playerId);
+        String oldName = old.getTempName();
 
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {
-                    Player reference = em.getReference(Player.class, playerId);
-                    reference.setTempName(newName);
-                    Player merged = em.merge(reference);
+                    Player merged = em.merge(old);
+                    merged.setTempName(newName);
+
+                    if (!merged.getOldNames().contains(oldName))
+                        merged.getOldNames().add(oldName);
                     return newName.equals(merged.getTempName());
                 }
         );
@@ -174,12 +177,17 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public boolean update(Long playerId) {
         Player updated = dataUtils.getNewPlayer(playerId);
+        Player current = findById(playerId);
+        String newName = updated.getTempName();
+        String oldName = current.getTempName();
 
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {
-                    Player player = em.getReference(Player.class, playerId);
-                    Player merged = em.merge(player);
-                    merged.setTempName(updated.getTempName());
+                    Player merged = em.merge(current);
+                    merged.setTempName(newName);
+
+                    if (!merged.getOldNames().contains(oldName))
+                        merged.getOldNames().add(oldName);
                     return true;
                 }
         );
@@ -206,7 +214,7 @@ public class PlayerDAOImpl implements PlayerDAO {
     public Player getPlayer(String playerIdOrName) {
         Player player;
         if (isId(playerIdOrName)) {
-            player = findById(Long.parseLong(playerIdOrName));//todo getReference()??????
+            player = findById(Long.parseLong(playerIdOrName));
         } else {
             player = findByTempName(playerIdOrName);
         }
@@ -232,7 +240,8 @@ public class PlayerDAOImpl implements PlayerDAO {
                             .getSingleResult()
             );
         } catch (Exception e) {
-            //e.printStackTrace();
+            throw e;
+            //e.printStackTrace();//todo
         }
         return player;
     }
