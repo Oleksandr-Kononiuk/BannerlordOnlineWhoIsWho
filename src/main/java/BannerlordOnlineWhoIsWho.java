@@ -364,7 +364,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }
-            case "diplomacy"://+
+            case "diplomacy"://
                 try {
                     Map<Integer, List<Clan>> diplomacy = clanDAO.buildDiplomacy();
                     return view.toDiplomacyString(diplomacy);

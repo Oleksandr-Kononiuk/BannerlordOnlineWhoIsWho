@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *@author  Oleksandr Kononiuk
@@ -43,7 +44,10 @@ public class View {
         for(Map.Entry<Integer, List<Clan>> entry : diplomacy.entrySet()) {
             out.append(DataUtils.relationsState[entry.getKey()]);
             out.append("\n");
-            out.append(Arrays.toString(entry.getValue().toArray()));
+            out.append(Arrays.toString(
+                    entry.getValue().stream()
+                            .map(Clan::getClanName).toArray()
+            ));
             out.append("\n");
         }
         return out.toString();
