@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *@author  Oleksandr Kononiuk
+ * @author Oleksandr Kononiuk
  */
 
 @Entity
@@ -27,7 +27,7 @@ public class Player {
     @Column(name = "temp_name", nullable = false)
     private String temp_name;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "clan_id")
     private Clan clan;
 
@@ -45,8 +45,8 @@ public class Player {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
-            name="old_names",
-            joinColumns=@JoinColumn(name="id")
+            name = "old_names",
+            joinColumns = @JoinColumn(name = "id")
     )
     private List<String> oldNames = new ArrayList<>();
 
@@ -153,7 +153,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return  "```css\n" +
+        return "```css\n" +
                 "id: '" + id + "'" +
                 ", Актуальный ник '" + temp_name + "'" +
                 ", Клан '" + (clan != null ? clan.getClanName() : "отсуствует") + "'" +
@@ -168,7 +168,7 @@ public class Player {
     }
 
     public String toClanMemberString() {
-        return  "id '" + id + "'" +
+        return "id '" + id + "'" +
                 ", Актуальный ник '" + temp_name + "'" +
                 ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
                 ", Размер отряда '" + army + "'" +

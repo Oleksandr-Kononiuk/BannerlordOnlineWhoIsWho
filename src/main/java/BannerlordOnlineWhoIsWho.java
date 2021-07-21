@@ -6,6 +6,7 @@ import model.Clan;
 import model.Player;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -50,45 +51,14 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
         }
     }
 
-    public void test() {
-        System.out.println("Enter command: ");
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            String c;
-            do {
-                c = reader.readLine();
-                parseCommand(c);
-            } while (!c.toLowerCase().equals("!exit"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (checkChanel(event) && checkPermissions(event)) {
-            if (checkMe(event) && event.getMessage().getContentRaw().startsWith("fill_db")) {
-                System.out.println("Morgan_Black(Саня)#2160 authorized." );
-                String[] words = event.getMessage().getContentRaw().split(" ");
-                System.out.println("Fill DB from player ID:" + words[1] + " to:" + words[2]);
-                fillDB(Integer.parseInt(words[1]), Integer.parseInt(words[2]));
-                event.getChannel().sendMessage("Building DB completed").queue();
-            } else
-            if (checkMe(event) && event.getMessage().getContentRaw().startsWith("update_db")){
-                System.out.println("Morgan_Black(Саня)#2160 authorized." );
-                String[] words = event.getMessage().getContentRaw().split(" ");
-                System.out.println("Update DB from player ID:" + words[1] + " to:" + words[2]);
-                updateDB(Integer.parseInt(words[1]), Integer.parseInt(words[2]));
-                event.getChannel().sendMessage("Update completed").queue();
-            } else {
-                //System.out.println("Chanel name: " + event.getChannel().getName());
-
-                String command = event.getMessage().getContentRaw();
-                System.out.println("Text: " + command);
-
-                String result = parseCommand(command);
-
-                event.getChannel().sendMessage(result).queue();
-            }
+            //System.out.println("Chanel name: " + event.getChannel().getName());
+            Message command = event.getMessage();
+            System.out.println("Text: " + command.getContentRaw());
+            String result = parseCommand(command);
+            event.getChannel().sendMessage(result).queue();
         }
     }
 
@@ -112,14 +82,8 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
         return false;
     }
 
-    private boolean checkMe(MessageReceivedEvent event) {
-//        System.out.println(event.getMember().getUser().getAsTag());
-//        System.out.println(event.getMember().getUser().getName());
-        if (event.getMember().getUser().getAsTag().equals("Morgan_Black(Саня)#2160")
-                && event.getMember().getUser().getName().equals("Morgan_Black(Саня)")) {
-            return true;
-        }
-        return false;
+    private boolean checkMe(String tag) {
+        return tag.equals("Morgan_Black(Саня)#2160");
     }
 
     private String playerCommands(String command, String[] args) {
@@ -253,7 +217,6 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
         }
     }
 
-
     private String clanCommands(String command, String[] args) {
         switch (command.toLowerCase()) {
             case "new"://+
@@ -352,10 +315,10 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
         }
     }
 
-    private String parseCommand(String command) {
+    private String parseCommand(Message command) {
         //String command = getCommand();
 
-        String[] words = command.split(" ");
+        String[] words = command.getContentRaw().split(" ");
         //System.out.println(words.length);
         //if (words[0].startsWith("!exit")) System.exit(0);;
 
@@ -368,6 +331,36 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                     return playerCommands(words[1], args);
                 case "!clan":
                     return clanCommands(words[1], args);
+                case "!update_db":
+                    if (checkMe(command.getMember().getUser().getAsTag())) {
+                        System.out.println("Morgan_Black(Саня)#2160 authorized." );
+                        System.out.println("Updating DB from player ID:" + words[1] + " to:" + words[2]);
+
+                        for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
+                            playerDAO.update(i);
+                            try {
+                                Thread.sleep(10); //timeout
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return String.format("> Database was updated for player ID`s %s - %s", words[1], words[2]);
+                    }
+                case "!fill_db":
+                    if (checkMe(command.getMember().getUser().getAsTag())) {
+                        System.out.println("Morgan_Black(Саня)#2160 authorized." );
+                        System.out.println("Filling DB from player ID:" + words[1] + " to:" + words[2]);
+
+                        for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
+                            playerDAO.save(i);
+                            try {
+                                Thread.sleep(10); //timeout
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return String.format("> Database was filled for player ID`s %s - %s", words[1], words[2]);
+                    }
                 default:
                     return WRONG_FORMAT;
             }
@@ -408,29 +401,5 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
             e.printStackTrace();
         }
         return command;
-    }
-
-    private void fillDB(int from, int to) {
-        for (int i = from; i < to; i++) {
-            String command = "!player save " + i;
-            parseCommand(command);
-            try {
-                Thread.sleep(10); //timeout
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void updateDB(int from, int to) {
-        for (int i = from; i <= to; i++) {
-            String command = "!player update " + i;
-            parseCommand(command);
-            try {
-                Thread.sleep(10); //timeout
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
