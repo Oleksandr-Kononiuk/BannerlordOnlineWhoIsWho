@@ -24,7 +24,7 @@ public class DataUtils {
 
         if (link != null) {
             player = buildPlayer(getIDFromLink(link), getName(doc), link);
-            //System.out.println(player.toString());
+            System.out.println(player.toString());
         } else {
             System.out.println("link is null");
         }

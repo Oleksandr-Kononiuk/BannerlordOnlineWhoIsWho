@@ -16,9 +16,6 @@ import utils.View;
 import javax.persistence.NoResultException;
 import javax.persistence.RollbackException;
 import javax.security.auth.login.LoginException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +36,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private static final String WRONG_FORMAT = "> Возможно неправильный формат команды. Попробуйте еще раз.";
 
     public static void main(String[] args) {
-        JpaUtil.init("BO_dev"); // initialize database
+        JpaUtil.init("BannerlordOnlinePlayersMySQL"); // initialize database
         BannerlordOnlineWhoIsWho BOWIW = new BannerlordOnlineWhoIsWho();
 
         try {
@@ -407,16 +404,5 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private String playerNotFoundString(Exception e) {
         return String.format("> Игрок не найден. " +
                 "Причина: %s %s", e.getClass().getName(), e.getMessage());
-    }
-
-    private String getCommand() {
-        System.out.println("Enter command: ");
-        String command = "";
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            command = reader.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return command;
     }
 }

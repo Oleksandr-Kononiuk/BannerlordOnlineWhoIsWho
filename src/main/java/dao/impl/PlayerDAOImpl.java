@@ -37,7 +37,9 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public Player find(String[] playerIdOrName) {
         String s = buildStringFromArgs(playerIdOrName);
-        return getPlayer(s);
+        Player p = getPlayer(s);
+        System.out.println(p.toString());
+        return p;
     }
 
     @Override

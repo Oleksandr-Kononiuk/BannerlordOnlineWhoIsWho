@@ -14,7 +14,7 @@ import java.util.Objects;
 public class Clan{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long clan_id;
 
     @Column(name = "clan_name", unique = true, nullable = false)
