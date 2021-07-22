@@ -96,43 +96,9 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 case "!clan":
                     return clanCommands(words[1], args);
                 case "!update_db":
-                    if (checkMe(command.getMember().getUser().getAsTag())) {
-                        System.out.println("Morgan_Black(Саня)#2160 authorized." );
-                        System.out.println("Updating DB from player ID:" + words[1] + " to:" + words[2]);
-
-                        for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
-                            try {
-                                playerDAO.update(i);
-                            } catch (Exception n) {
-                                System.out.println(n.getMessage() + " " + i);
-                            }
-                            try {
-                                Thread.sleep(10); //timeout
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return String.format("> Database was updated for player ID`s %s - %s", words[1], words[2]);
-                    }
+                    return updateDB(command, words);
                 case "!fill_db":
-                    if (checkMe(command.getMember().getUser().getAsTag())) {
-                        System.out.println("Morgan_Black(Саня)#2160 authorized." );
-                        System.out.println("Filling DB from player ID:" + words[1] + " to:" + words[2]);
-
-                        for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
-                            try {
-                                playerDAO.save(i);
-                            } catch (Exception n) {
-                                System.out.println(n.getMessage() + " " + i);
-                            }
-                            try {
-                                Thread.sleep(10); //timeout
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return String.format("> Database was filled for player ID`s %s - %s", words[1], words[2]);
-                    }
+                    return fillDB(command, words);
                 default:
                     return WRONG_FORMAT;
             }
@@ -371,6 +337,54 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 System.out.println("Maybe wrong command format. Please try again.");
                 return WRONG_FORMAT;
         }
+    }
+
+    private String updateDB(Message command, String[] words) {
+        if (checkMe(command.getMember().getUser().getAsTag())) {
+            System.out.println("Morgan_Black(Саня)#2160 authorized." );
+            System.out.println("Updating DB from player ID: " + words[1] + " to: " + words[2]);
+
+            for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
+                try {
+                    playerDAO.update(i);
+                } catch (NullPointerException n) {
+                    System.out.println(n.getMessage() + " " + i);
+                } catch (Exception n) {
+                    System.out.println(n.getMessage() + " " + i);
+                }
+                try {
+                    Thread.sleep(100); //timeout
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return String.format("> Database was updated for player ID`s %s - %s", words[1], words[2]);
+        }
+        return "> You are not allowed to use this command";
+    }
+
+    private String fillDB(Message command, String[] words) {
+        if (checkMe(command.getMember().getUser().getAsTag())) {
+            System.out.println("Morgan_Black(Саня)#2160 authorized." );
+            System.out.println("Filling DB from player ID:" + words[1] + " to:" + words[2]);
+
+            for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
+                try {
+                    playerDAO.save(i);
+                } catch (RollbackException p) {
+                    System.out.println("Игрок уже существует в базе.");
+                } catch (Exception n) {
+                    System.out.println(n.getMessage() + " " + i);
+                }
+                try {
+                    Thread.sleep(100); //timeout
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return String.format("> Database was filled for player ID`s %s - %s", words[1], words[2]);
+        }
+        return "> You are not allowed to use this command";
     }
 
     private boolean validateCommand(String[] command) {

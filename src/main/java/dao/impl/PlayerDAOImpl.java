@@ -174,14 +174,21 @@ public class PlayerDAOImpl implements PlayerDAO {
 
     @Override
     public boolean update(Long playerId) {
-        Player updated = dataUtils.getNewPlayer(playerId);
-        Player current = findById(playerId);
-        String newName = updated.getTempName();
-        String oldName = current.getTempName();
+        Player forumPlayer = dataUtils.getNewPlayer(playerId);
+        Player dbPlayer = findById(playerId);
 
+        if (forumPlayer == null && dbPlayer != null) throw new NullPointerException("Player not found in forum but he is in DB.");
+        if (forumPlayer != null && dbPlayer == null) {
+            save(playerId);
+            return true;
+        }
+        if (dbPlayer == null && forumPlayer == null) throw new NullPointerException("Player not found in DB and forum.");
+
+        String newName = forumPlayer.getTempName();
+        String oldName = dbPlayer.getTempName();
         return JpaUtil.performReturningWithinPersistenceContext(
                 em -> {
-                    Player merged = em.merge(current);
+                    Player merged = em.merge(dbPlayer);
                     merged.setTempName(newName);
 
                     if (!merged.getOldNames().contains(oldName))

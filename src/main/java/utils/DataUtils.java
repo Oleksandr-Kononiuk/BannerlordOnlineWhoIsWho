@@ -24,7 +24,7 @@ public class DataUtils {
 
         if (link != null) {
             player = buildPlayer(getIDFromLink(link), getName(doc), link);
-            System.out.println(player.toString());
+            //System.out.println(player.toString());
         } else {
             System.out.println("link is null");
         }
@@ -44,7 +44,6 @@ public class DataUtils {
 
     private long getIDFromLink(String link) {
         String id = link.substring(link.lastIndexOf(".") + 1, link.length() - 1);
-        //System.out.println(id);
         return Long.parseLong(id);
     }
 
@@ -53,12 +52,8 @@ public class DataUtils {
             Elements elements = doc.getElementsByTag("title");
 
             if (elements.size() != 0) {
-                //System.out.println(elements.size());
                 String tagText = elements.get(0).text();
-                String name = tagText.split("\\|")[0].trim();
-//                System.out.println(tagText);
-                System.out.println(name);
-                return name;
+                return tagText.split("\\|")[0].trim();
             }
         } else {
             System.out.println("doc is null");
