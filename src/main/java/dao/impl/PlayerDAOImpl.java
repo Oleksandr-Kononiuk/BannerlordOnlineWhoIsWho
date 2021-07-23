@@ -64,21 +64,13 @@ public class PlayerDAOImpl implements PlayerDAO {
     }
 
     @Override
-    public List<Player> findAll(String filter) {
-        if (filter.matches("\\d+")) {            //return N first players
-            return JpaUtil.performReturningWithinPersistenceContext(
-                    em -> em.createQuery("select p from Player p", Player.class)
-                            .setMaxResults(Integer.parseInt(filter))
-                            .getResultList()
-            );
-        } else {                                            //return all players which name starts on filter
-            String query = "select p from Player p where p.temp_name LIKE '" + filter + "%'";
-            return JpaUtil.performReturningWithinPersistenceContext(
-                    em -> em.createQuery(query, Player.class)
-                            .setMaxResults(9)
-                            .getResultList()
-            );
-        }
+    public List<Player> findAll(String filter) { //return all players which name starts on filter
+        String query = "select p from Player p where p.temp_name LIKE '" + filter + "%'";
+        return JpaUtil.performReturningWithinPersistenceContext(
+                em -> em.createQuery(query, Player.class)
+                        .setMaxResults(9)
+                        .getResultList()
+        );
     }
 
     @Override
