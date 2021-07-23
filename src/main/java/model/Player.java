@@ -143,13 +143,12 @@ public class Player {
     public String toString() {
         return "```css\n" +
                 "id: '" + id + "'" +
-                ", Актуальный ник '" + temp_name + "'" +
+                ", Никнейм '" + temp_name + "'" +
                 ", Клан '" + (clan != null ? clan.getClanName() : "отсуствует") + "'" +
                 ", Размер отряда '" + army + "'" +
                 ", Отношения '" + (clan != null ? DataUtils.relationsState[clan.getRelation()] : "-") + "'" +
                 ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
                 ", Твинк '" + (is_twink ? "Да" : "Нет") + "'" +
-                ", Основной ник '" + main_name + "'" +
                 ", Известен как '" + Arrays.toString(oldNames.toArray()) + "'" +
                 ", Ссылка на профиль '" + profile_link + "'" +
                 "```";
@@ -160,7 +159,6 @@ public class Player {
                 ", Актуальный ник '" + temp_name + "'" +
                 ", Лидер клана '" + (is_clan_leader ? "Да" : "Нет") + "'" +
                 ", Размер отряда '" + army + "'" +
-                ", Твинк '" + (is_twink ? "Да" : "Нет") + "'" +
-                ", Основной ник '" + main_name + "'";
+                ", Твинк '" + (is_twink ? "Да" : "Нет") + "'";
     }
 }

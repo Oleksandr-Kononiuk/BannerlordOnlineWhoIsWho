@@ -155,7 +155,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                         StringBuilder resultOut = new StringBuilder();
                         int count = 0;
                         for (Player p : players) {
-                            if (count > 4) break; // first 5 result line
+                            if (count > 7) break; // first 8 result line
 
                             resultOut.append(view.toStringPlayer(p));
                             resultOut.append("\n");
