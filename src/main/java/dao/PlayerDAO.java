@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface PlayerDAO {
 
-    boolean save(long id);
+    boolean save(String id);
     Player find(String[] playerIdOrName);
     Clan getPlayerClan(String[] playerIdOrName);
     boolean isClanLeader(String[] playerIdOrName);

@@ -36,7 +36,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private static final String WRONG_FORMAT = "> Возможно неправильный формат команды. Попробуйте еще раз.";
 
     public static void main(String[] args) {
-        JpaUtil.init("BannerlordOnlinePlayersMySQL"); // initialize database
+        JpaUtil.init("BO_dev"); // initialize database
         BannerlordOnlineWhoIsWho BOWIW = new BannerlordOnlineWhoIsWho();
 
         try {
@@ -60,7 +60,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private boolean checkChanel(MessageReceivedEvent event) {
         //System.out.println("Chanel name: " + event.getChannel().getName());
 
-        return event.getChannel().getName().equals("commands") || event.getChannel().getName().equals("feedback");
+        return event.getChannel().getName().equals("commands") || event.getChannel().getName().equals("tests");
     }
 
     private boolean checkPermissions(MessageReceivedEvent event) {
@@ -109,7 +109,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
             case "save"://+-
                 try {
-                    playerDAO.save(Long.parseLong(args[0]));
+                    playerDAO.save(args[0]);
                     return "> Игрок добавлен.";
                 } catch (RollbackException p) {
                     return "> Игрок уже существует в базе.";
@@ -367,7 +367,7 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
             for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
                 try {
-                    playerDAO.save(i);
+                    playerDAO.save(Long.toString(i));
                 } catch (RollbackException p) {
                     System.out.println("Игрок уже существует в базе.");
                 } catch (Exception n) {

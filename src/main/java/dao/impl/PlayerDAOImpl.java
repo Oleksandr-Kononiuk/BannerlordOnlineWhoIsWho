@@ -17,9 +17,7 @@ public class PlayerDAOImpl implements PlayerDAO {
     private DataUtils dataUtils = new DataUtils();
 
     @Override
-    public boolean save(long id) {
-        if (id < 0) throw new IllegalArgumentException("Id не может быть отрицательным.");
-
+    public boolean save(String id) {
         Player newPlayer = dataUtils.getNewPlayer(id);
 
         if (newPlayer != null) {
@@ -168,12 +166,12 @@ public class PlayerDAOImpl implements PlayerDAO {
 
     @Override
     public boolean update(Long playerId) {
-        Player forumPlayer = dataUtils.getNewPlayer(playerId);
+        Player forumPlayer = dataUtils.getNewPlayer(Long.toString(playerId));
         Player dbPlayer = findById(playerId);
 
         if (forumPlayer == null && dbPlayer != null) throw new NullPointerException("Player not found in forum but he is in DB.");
         if (forumPlayer != null && dbPlayer == null) {
-            save(playerId);
+            save(Long.toString(playerId));
             return true;
         }
         if (dbPlayer == null && forumPlayer == null) throw new NullPointerException("Player not found in DB and forum.");
@@ -207,7 +205,7 @@ public class PlayerDAOImpl implements PlayerDAO {
         if (playerIdOrName.matches("\\D")) { //contain any non-digit character
             return false;
         }
-        return playerIdOrName.matches("\\d+"); //is contain digit character with 1+ length
+        return playerIdOrName.matches("^\\d+$"); //is contain digit character with 1+ length
     }
 
     public Player getPlayer(String playerIdOrName) {

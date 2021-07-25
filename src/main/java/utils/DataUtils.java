@@ -16,17 +16,24 @@ public class DataUtils {
     public static final String[] relationsState = new String[] {"Нейтралитет", "Война", "Дружные"};
     private static final String PROFILE_LINK = "https://bannerlord-online.com/forum/index.php?members/";
 
-    public Player getNewPlayer(long id) {
+    public Player getNewPlayer(String idOrLink) {
         Player player = null;
 
-        Document doc = getDocument(PROFILE_LINK + id);
-        String link = getLink(doc);
+        if (idOrLink.matches("^\\d+$")) {
+            if (Long.parseLong(idOrLink) < 0) throw new IllegalArgumentException("Id не может быть отрицательным.");
 
-        if (link != null) {
-            player = buildPlayer(getIDFromLink(link), getName(doc), link);
-            System.out.println(player.toString());
+            Document doc = getDocument(PROFILE_LINK + idOrLink);
+            String link = getLink(doc);
+
+            if (link != null) {
+                player = buildPlayer(getIDFromLink(link), getName(doc), link);
+                System.out.println(player.toString());
+            } else {
+                System.out.println("link is null");
+            }
         } else {
-            System.out.println("link is null");
+            player = buildPlayer(getIDFromLink(idOrLink), getNameFromLink(idOrLink), idOrLink);
+            System.out.println(player.toString());
         }
         return player;
     }
@@ -53,12 +60,24 @@ public class DataUtils {
 
             if (elements.size() != 0) {
                 String tagText = elements.get(0).text();
+                //System.out.println(tagText);
                 return tagText.split("\\|")[0].trim();
             }
         } else {
             System.out.println("doc is null");
         }
         return null;
+    }
+
+    //Example: https://bannerlord-online.com/forum/index.php?members/piracent.23390/
+    private String getNameFromLink(String link) {
+        int start = link.lastIndexOf("rs/") + 3;
+        int end = link.lastIndexOf(".");
+        String name = link.substring(start, end);
+        name = name.replaceAll("-", " ");
+        System.out.println(name);
+
+        return name;
     }
 
 
@@ -87,6 +106,7 @@ public class DataUtils {
                     .method(Connection.Method.GET)
                     .get();
         } catch (IOException e) {
+            //e.printStackTrace();
             System.out.println(e.getMessage());
             System.out.println(String.format("getDocument(String %s) return NULL", source));
             //e.printStackTrace();
