@@ -165,4 +165,13 @@ public class ClanDAOImpl implements ClanDAO {
         return clans.stream()
                 .collect(Collectors.groupingBy(Clan::getRelation));
     }
+
+    @Override
+    public void updateClan(String clanName) {
+        Clan clan = findByName(clanName);
+
+        for(Player member : clan.getMembers()) {
+            playerDAO.update(member.getId());
+        }
+    }
 }

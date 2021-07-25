@@ -330,6 +330,13 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
                 } catch (Exception e) {
                     return clanNotFoundString(e);
                 }
+            case "update":
+                try {
+                    clanDAO.updateClan(args[0]);
+                    return "> Состав клана обновлен.";
+                } catch (Exception e) {
+                    return clanNotFoundString(e);
+                }
             default:
                 System.out.println("Maybe wrong command format. Please try again.");
                 return WRONG_FORMAT;

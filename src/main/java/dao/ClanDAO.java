@@ -21,4 +21,5 @@ public interface ClanDAO {
     Clan findByName(String clanName);
     boolean setRelation(String clanName, int relation);
     Map<Integer, List<Clan>> buildDiplomacy();
+    void updateClan(String clanName);
 }
