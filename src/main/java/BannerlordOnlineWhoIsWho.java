@@ -1,9 +1,6 @@
-import dao.ClanDAO;
-import dao.PlayerDAO;
-import dao.impl.ClanDAOImpl;
-import dao.impl.PlayerDAOImpl;
-import model.Clan;
-import model.Player;
+import commands.ClanCommands;
+import commands.PlayerCommands;
+import commands.RootCommands;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -12,24 +9,18 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import utils.JpaUtil;
-import utils.View;
-import javax.persistence.NoResultException;
-import javax.persistence.RollbackException;
 import javax.security.auth.login.LoginException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
- *@author  Oleksandr Kononiuk
+ * @author Oleksandr Kononiuk
  */
 
 public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
-    private final PlayerDAO playerDAO = new PlayerDAOImpl();
-    private final ClanDAO clanDAO = new ClanDAOImpl();
-    private final View view = new View();
+    private final PlayerCommands player = new PlayerCommands();
+    private final ClanCommands clan = new ClanCommands();
+    private final RootCommands root = new RootCommands();
 
     private static final String BOT_TOKEN = "ODYxOTI0MjcwMDYxMjU2NzA0.YOQ3hw.h8tBbMsPKYog0pKr8aY-nypu4Os";
     private static final String[] ACCESS_ROLE_POSITION = new String[]{"Князь", "Бояре", "Рекрутёр", "Diplomat", "Великий Князь"};
@@ -42,6 +33,8 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
         try {
             JDA jda = JDABuilder.createDefault(BOT_TOKEN).build(); // initialize bot
             jda.addEventListener(BOWIW);
+
+
         } catch (LoginException e) {
             e.printStackTrace();
         }
@@ -76,10 +69,6 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
         return false;
     }
 
-    private boolean checkMe(String tag) {
-        return tag.equals("Morgan_Black(Саня)#2160");
-    }
-
     private String parseCommand(Message command) {
         String[] words = command.getContentRaw().split(" ");
 
@@ -89,306 +78,27 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
 
             switch (words[0].toLowerCase()) {
                 case "!player":
-                    return playerCommands(words[1], args);
+                    return player.command(words[1], args);
                 case "!clan":
-                    return clanCommands(words[1], args);
+                    return clan.command(words[1], args);
                 case "!update_db":
-                    return updateDB(command, words);
+                    try {
+                        return root.updateDB(command, words);
+                    } catch (NumberFormatException n) {
+                        return WRONG_FORMAT;
+                    }
                 case "!fill_db":
-                    return fillDB(command, words);
+                    try {
+                        return root.fillDB(command, words);
+                    } catch (NumberFormatException n) {
+                        return WRONG_FORMAT;
+                    }
                 default:
                     return WRONG_FORMAT;
             }
         } else {
             return WRONG_FORMAT;
         }
-    }
-
-    private String playerCommands(String command, String[] args) {
-        switch (command.toLowerCase()) {
-
-            case "save"://+-
-                try {
-                    playerDAO.save(args[0]);
-                    return "> Игрок добавлен.";
-                } catch (RollbackException p) {
-                    return "> Игрок уже существует в базе.";
-                } catch (NumberFormatException n) {
-                    return "> Входной параметр не цифра.";
-                } catch (IllegalArgumentException i) {
-                    return "> Id не может быть отрицательным.";
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "find"://+
-                try {
-                    Player p = playerDAO.find(args);
-                    return view.toStringPlayer(p);
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "clan"://+
-                try {
-                    Clan clan = playerDAO.getPlayerClan(args);
-                    return (clan == null ? "> Игрок не состоит в клане." : view.toStringClan(clan));
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "leader"://+
-                try {
-                    boolean isLeader = playerDAO.isClanLeader(args);
-                    return String.format("> Игрок%s лидер клана.", (isLeader ? "" : " не"));
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "twink"://+
-                try {
-                    boolean isTwink = playerDAO.isTwink(args);
-                    return String.format("> Аккаунт%s твинк.", (isTwink ? "" : " не"));
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "all"://+
-                try {
-                    List<Player> players = playerDAO.findAll(args[0]);
-                    if (players.size() > 0) {
-                        StringBuilder resultOut = new StringBuilder();
-                        int count = 0;
-                        for (Player p : players) {
-                            if (count > 7) break; // first 8 result line
-
-                            resultOut.append(view.toStringPlayer(p));
-                            resultOut.append("\n");
-                            count++;
-                        }
-                        return resultOut.toString();
-                    }
-                } catch (Exception e) {
-                    return "> По запросу игроков не найдено. Причина: " + e.getMessage();
-                }
-            case "change_name"://+
-                try {
-                    boolean isChanged = playerDAO.changeTempName(Long.parseLong(args[0]), args);
-                    return String.format("> Имя игрока%s изменено.", (isChanged ? "" : " не"));
-                } catch (NumberFormatException n) {
-                    return "> Id игрока не указан.";
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "change_clan"://+
-                try {
-                    boolean isChanged = playerDAO.changeClan(Long.parseLong(args[0]), args[1]);
-                    return String.format("> Клан игрока%s изменен.", (!isChanged ? "" : " не"));
-                } catch (IllegalStateException n) {
-                    return "> Игрок уже в клане.";
-                } catch (NumberFormatException n) {
-                    return "> Id игрока не указан.";
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "army":
-                try {
-                    boolean isChanged = playerDAO.setArmy(Integer.parseInt(args[0]), args);
-                    return String.format("> Количество войск%s обновлено.", (isChanged ? "" : " не"));
-                } catch (NumberFormatException n) {
-                    return "> Первый параметр должен быть числом!";
-                } catch (IllegalArgumentException i) {
-                    return "> Размер армии не может быть отрицательным!";
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "set_leader"://+
-                try {
-                    boolean isChanged = playerDAO.setClanLeader(Boolean.parseBoolean(args[0]), args);
-                    return String.format("> Статус лидера%s изменен.", (!isChanged ? "" : " не"));
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "set_twink"://+
-                try {
-                    boolean isChanged = playerDAO.setTwink(Boolean.parseBoolean(args[0]), args);
-                    return String.format("> Статус твинка%s изменен.", (!isChanged ? "" : " не"));
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "delete"://+
-                try {
-                    boolean isDeleted = playerDAO.delete(Long.parseLong(args[0]));
-                    return String.format("> Игрок%s удален.", (isDeleted ? "" : " не"));
-                } catch (IllegalArgumentException i) {
-                    return "> Id отрицательный или не цифра.";
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            case "update"://+
-                try {
-                    boolean isUpdated = playerDAO.update(Long.parseLong(args[0]));
-                    return String.format("> Игрок%s обновлен.", (isUpdated ? "" : " не"));
-                } catch (IllegalArgumentException i) {
-                    return "> Id отрицательный или не цифра.";
-                } catch (Exception e) {
-                    return playerNotFoundString(e);
-                }
-            default:
-                System.out.println("Maybe wrong command format. Please try again.");
-                return WRONG_FORMAT;
-        }
-    }
-
-    private String clanCommands(String command, String[] args) {
-        switch (command.toLowerCase()) {
-            case "new"://+
-                try {
-                    clanDAO.addNewClan(args[0]);
-                    return "> Клан добавлен.";
-                } catch (Exception e) {
-                    return clanNotFoundString(e);
-                }
-            case "delete": //+
-                try {
-                    boolean isDeleted = clanDAO.deleteClan(args[0]);
-                    return String.format("> Клан%s удален.", (isDeleted ? "" : " не"));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return clanNotFoundString(e);
-                }
-            case "add_member"://+
-                try {
-                    boolean isAdded = clanDAO.addMember(args[0], Arrays.copyOfRange(args, 1, args.length));
-                    return String.format("> Игрок%s добавлен в состав клана.", (!isAdded ? "" : " не"));
-                } catch (NoResultException n) {
-                    return playerNotFoundString(n);
-                } catch (Exception e) {
-                    return clanNotFoundString(e);
-                }
-            case "delete_member"://+
-                try {
-                    boolean isDeleted = clanDAO.deleteMember(args[0], Long.parseLong(args[1]));
-                    return String.format("> Игрок%s удален из состав клана.", (!isDeleted ? "" : " не"));
-                } catch (IllegalArgumentException i) {
-                    return "> Id отрицательный или не цифра.";
-                } catch (NoResultException n) {
-                    return playerNotFoundString(n);
-                } catch (Exception e) {
-                    return clanNotFoundString(e);
-                }
-            case "leader"://+
-                try {
-                    String clanLeader = clanDAO.getClanLeader(args[0]);
-                    return "```css\n Лидер клана [" + clanLeader + "]```";
-                } catch (NullPointerException n) {
-                    return "> Клан пустой или лидера не пометили. " + n.getMessage();
-                } catch (Exception e) {
-                    return clanNotFoundString(e);
-                }
-            case "change_leader"://+
-                try {
-                    boolean isChanged = clanDAO.changeClanLeader(args[0], Long.parseLong(args[1]), Long.parseLong(args[2]));
-                    return String.format("> Лидер%s сменен.", (isChanged ? "" : " не"));
-                } catch (NoSuchElementException n) {
-                    return "> Клан пустой или " + n.getMessage();
-                } catch (Exception e) {
-                    return clanNotFoundString(e);
-                }
-            case "all"://+
-                try {
-                    List<Clan> clans = clanDAO.getAllClans(args[0]);
-                    if (clans.size() > 0) {
-                        StringBuilder resultOut = new StringBuilder();
-                        for (Clan c : clans) {
-                            resultOut.append(view.toStringClan(c));
-                            resultOut.append("\n");
-                        }
-                        return resultOut.toString();
-                    }
-                } catch (Exception e) {
-                    return "> По запросу кланов не найдено. " + e.getMessage();
-                }
-            case "find":
-                try {
-                    Clan clan = clanDAO.findByName(args[0]);
-                    if (clan != null) {
-                        return view.toStringClan(clan);
-                    }
-                } catch (Exception e) {
-                    return clanNotFoundString(e);
-                }
-            case "relations"://+
-                try {
-                    boolean isChanged = clanDAO.setRelation(args[0], Integer.parseInt(args[1]));
-                    return String.format("> > Дипломатические отношения%s изменены.", (isChanged ? "" : " не"));
-                } catch (IllegalArgumentException i) {
-                    return "> Параметр дипломатических отношений указан неправильно. " +
-                            "Правильные параметры: 0 -> нейтралитет, 1 -> война, 2 -> дружные.";
-                } catch (Exception e) {
-                    return clanNotFoundString(e);
-                }
-            case "diplomacy"://
-                try {
-                    Map<Integer, List<Clan>> diplomacy = clanDAO.buildDiplomacy();
-                    return view.toDiplomacyString(diplomacy);
-                } catch (Exception e) {
-                    return clanNotFoundString(e);
-                }
-            case "update":
-                try {
-                    clanDAO.updateClan(args[0]);
-                    return "> Состав клана обновлен.";
-                } catch (Exception e) {
-                    return clanNotFoundString(e);
-                }
-            default:
-                System.out.println("Maybe wrong command format. Please try again.");
-                return WRONG_FORMAT;
-        }
-    }
-
-    private String updateDB(Message command, String[] words) {
-        if (checkMe(command.getMember().getUser().getAsTag())) {
-            System.out.println("Morgan_Black(Саня)#2160 authorized." );
-            System.out.println("Updating DB from player ID: " + words[1] + " to: " + words[2]);
-
-            for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
-                try {
-                    playerDAO.update(i);
-                } catch (NullPointerException n) {
-                    System.out.println(n.getMessage() + " " + i);
-                } catch (Exception n) {
-                    System.out.println(n.getMessage() + " " + i);
-                }
-                try {
-                    Thread.sleep(100); //timeout
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            return String.format("> Database was updated for player ID`s %s - %s", words[1], words[2]);
-        }
-        return "> You are not allowed to use this command";
-    }
-
-    private String fillDB(Message command, String[] words) {
-        if (checkMe(command.getMember().getUser().getAsTag())) {
-            System.out.println("Morgan_Black(Саня)#2160 authorized." );
-            System.out.println("Filling DB from player ID:" + words[1] + " to:" + words[2]);
-
-            for (long i = Long.parseLong(words[1]); i <= Long.parseLong(words[2]); i++) {
-                try {
-                    playerDAO.save(Long.toString(i));
-                } catch (RollbackException p) {
-                    System.out.println("Игрок уже существует в базе.");
-                } catch (Exception n) {
-                    System.out.println(n.getMessage() + " " + i);
-                }
-                try {
-                    Thread.sleep(100); //timeout
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            return String.format("> Database was filled for player ID`s %s - %s", words[1], words[2]);
-        }
-        return "> You are not allowed to use this command";
     }
 
     private boolean validateCommand(String[] command) {
@@ -401,15 +111,5 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
             return false;
         }
         return true;
-    }
-
-    private String clanNotFoundString(Exception e) {
-        return String.format("> Клан не найден. " +
-                "Причина: %s", e.getMessage());
-    }
-
-    private String playerNotFoundString(Exception e) {
-        return String.format("> Игрок не найден. " +
-                "Причина: %s %s", e.getClass().getName(), e.getMessage());
     }
 }

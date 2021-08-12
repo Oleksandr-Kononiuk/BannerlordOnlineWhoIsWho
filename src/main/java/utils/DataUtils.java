@@ -15,7 +15,8 @@ public class DataUtils {
 
     public static final String[] relationsState = new String[] {"Нейтралитет", "Война", "Дружные"};
     private static final String PROFILE_LINK = "https://bannerlord-online.com/forum/index.php?members/";
-
+//todo добавити парсинг раніше відомих нікнеймів
+// наприклад https://bannerlord-online.com/forum/index.php?members/tpa-panzerjr.1028/
     public Player getNewPlayer(String idOrLink) {
         Player player = null;
 
@@ -109,8 +110,6 @@ public class DataUtils {
             //e.printStackTrace();
             System.out.println(e.getMessage());
             System.out.println(String.format("getDocument(String %s) return NULL", source));
-            //e.printStackTrace();
-            //logger.error(Arrays.toString(e.getStackTrace()));
         }
         return doc;
     }
