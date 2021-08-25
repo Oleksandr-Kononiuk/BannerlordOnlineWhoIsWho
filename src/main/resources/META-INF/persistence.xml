@@ -6,10 +6,10 @@
         <class>model.Clan</class>
 
         <properties>
-            <property name="hibernate.connection.url" value="jdbc:mysql://eu02-sql.pebblehost.com:3306/customer_206026_bo?serverTimezone=UTC"/>
+            <property name="hibernate.connection.url" value="url"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-            <property name="hibernate.connection.username" value="customer_206026_bo"/>
-            <property name="hibernate.connection.password" value="DoZiTQnMCMYl9HZtf$U@"/>
+            <property name="hibernate.connection.username" value="username"/>
+            <property name="hibernate.connection.password" value="password"/>
             <property name="connection.autoReconnect" value="true"/>
             <property name="connection.autoReconnectForPools" value="true"/>
             <property name="connection.is-connection-validation-required" value="true"/>
