@@ -1,12 +1,9 @@
 package commands;
 
 import dao.ClanDAO;
-import dao.PlayerDAO;
 import dao.impl.ClanDAOImpl;
-import dao.impl.PlayerDAOImpl;
 import model.Clan;
 import utils.View;
-
 import javax.persistence.NoResultException;
 import java.util.Arrays;
 import java.util.List;

@@ -5,7 +5,6 @@ import dao.impl.PlayerDAOImpl;
 import model.Clan;
 import model.Player;
 import utils.View;
-
 import javax.persistence.RollbackException;
 import java.util.List;
 

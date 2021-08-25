@@ -2,7 +2,6 @@ package dao;
 
 import model.Clan;
 import model.Player;
-
 import java.util.List;
 
 /**

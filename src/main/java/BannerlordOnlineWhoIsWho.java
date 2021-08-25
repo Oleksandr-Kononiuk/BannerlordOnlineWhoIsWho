@@ -31,9 +31,8 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
         BannerlordOnlineWhoIsWho BOWIW = new BannerlordOnlineWhoIsWho();
 
         try {
-            JDA jda = JDABuilder.createDefault(BOT_TOKEN).build(); // initialize bot
+            final JDA jda = JDABuilder.createDefault(BOT_TOKEN).build(); // initialize bot
             jda.addEventListener(BOWIW);
-
 
         } catch (LoginException e) {
             e.printStackTrace();

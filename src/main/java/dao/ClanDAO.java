@@ -1,7 +1,6 @@
 package dao;
 
 import model.Clan;
-
 import java.util.List;
 import java.util.Map;
 

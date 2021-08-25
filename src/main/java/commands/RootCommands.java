@@ -3,7 +3,6 @@ package commands;
 import dao.PlayerDAO;
 import dao.impl.PlayerDAOImpl;
 import net.dv8tion.jda.api.entities.Message;
-
 import javax.persistence.RollbackException;
 
 /**
