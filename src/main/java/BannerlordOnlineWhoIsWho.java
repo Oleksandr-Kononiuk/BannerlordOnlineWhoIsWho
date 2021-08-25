@@ -22,8 +22,8 @@ public class BannerlordOnlineWhoIsWho extends ListenerAdapter {
     private final ClanCommands clan = new ClanCommands();
     private final RootCommands root = new RootCommands();
 
-    private static final String BOT_TOKEN = "ODYxOTI0MjcwMDYxMjU2NzA0.YOQ3hw.h8tBbMsPKYog0pKr8aY-nypu4Os";
-    private static final String[] ACCESS_ROLE_POSITION = new String[]{"Князь", "Бояре", "Рекрутёр", "Diplomat", "Великий Князь"};
+    private static final String BOT_TOKEN = "Token can be created on https://discord.com/developers/applications";
+    private static final String[] ACCESS_ROLE_POSITION = new String[]{"Roles", "Which", "Need", "For", "Filter"};
     private static final String WRONG_FORMAT = "> Возможно неправильный формат команды. Попробуйте еще раз.";
 
     public static void main(String[] args) {
